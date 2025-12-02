@@ -208,6 +208,23 @@ END;
 -- Como se comporta ante un nulo? Devuelva 0;
 -- En SQL los booleanos no existen. Así que devuelvo un NUMBER: 1 = TRUE, 0 = FALSE
 
+CREATE OR REPLACE FUNCTION es_dni_valido (
+    dni IN VARCHAR2
+) RETURN NUMBER
+IS
+    dni_valido      BOOLEAN;
+    dni_numero      NUMBER(8);
+    dni_letra       CHAR(1);
+BEGIN
+    validar_dni(dni, dni_valido, dni_numero, dni_letra);
+    IF dni_valido THEN
+        RETURN 1;
+    ELSE
+        RETURN 0;
+    END IF;
+END;
+/
+
 -- funcion: normalizar_dni(dni IN VARCHAR2) RETURN VARCHAR2
 -- Si el dni no es válido, devuelve NULL
 -- Si el DNI es null devuelve NULL
