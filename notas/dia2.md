@@ -89,4 +89,11 @@ erDiagram
     }
 
     TIPOS_CURSOS ||--o{ CURSOS : "tiene"
+
+    PROFESORES {
+        NUMBER ID PK
+        VARCHAR NOMBRE
+        VARCHAR APELLIDOS
+        VARCHAR DNI
+    }
 ```

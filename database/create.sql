@@ -228,7 +228,69 @@ END;
 -- funcion: normalizar_dni(dni IN VARCHAR2) RETURN VARCHAR2
 -- Si el dni no es válido, devuelve NULL
 -- Si el DNI es null devuelve NULL
+-- Esa funcion debe aceptar más argumentos:
+-- - dni IN VARCHAR2
+-- - si quiero rellenar con ceros                  -> Podeis echar un ojo a la función LPAD (no es obligatorio)
+-- - si quiero separar con guiones o espacios o nada
+-- - si quiero la letra en mayúsculas (UPPER) o minúsculas (LOWER)
+-- - si quiero puntos en el número o no --- Esta en version 1 no!
 
+
+CREATE OR REPLACE FUNCTION normalizar_dni (
+    dni IN VARCHAR2,
+    rellenar_con_ceros IN NUMBER DEFAULT 1,
+    separador IN VARCHAR2 DEFAULT '',
+    letra_mayuscula IN NUMBER DEFAULT 1,
+    puntos_en_numero IN NUMBER DEFAULT 0
+) RETURN VARCHAR2
+IS
+    dni_valido          BOOLEAN;
+    dni_numero          NUMBER(8);
+    dni_letra           CHAR(1);
+    letra_normalizada   CHAR(1);
+    numero_normalizado  VARCHAR2(10);
+BEGIN
+    validar_dni(dni, dni_valido, dni_numero, dni_letra);
+    IF NOT dni_valido THEN
+        RETURN NULL;
+    END IF;
+    -- Aquí realmente es donde normalizo el valor del DNI
+
+    -- Normalización del número:
+    numero_normalizado := TO_CHAR(dni_numero);
+    -- Aplicar relleno con ceros a la izquierda si se ha pedido
+    IF rellenar_con_ceros = 1 THEN
+        -- Opción 1                      0000000123
+        -- Siempre le pongo delante 7 ceros y luego corto los que sobren
+        -- numero_normalizado := SUBSTR('0000000' || numero_normalizado, -8, 8); -- Coge 8 (8), desde los 8 últimos (-8)
+        -- Opción 2
+        numero_normalizado := LPAD(numero_normalizado, 8, '0'); -- Rellenar por la izquierda hasta tener 8 caracteres con ceros
+                                                                -- Otra función a conocer, similar es RPAD (rellena por la derecha)
+    END IF;
+    -- Aplicar los separadores de miles y millones
+
+
+    -- Normalización de la letra:
+
+    -- OPCION 1, que ya conocíamos!
+    -- IF letra_mayuscula = 1 THEN                   -- trabaja a nivel de statement: Es decir, lo que pongo dentro de las condiciones
+    --                                           -- es un statement. Por ejemplo, en este caso hago una asignación
+    --    letra_normalizada := UPPER(dni_letra);
+    -- ELSE
+    --    letra_normalizada := LOWER(dni_letra);
+    -- END IF;
+    -- OPCION 2: CASE:
+    letra_normalizada := CASE                    -- trabaja a nivel de expresión: Lo que pongo dentro del CASE es una expresión
+                                                 -- lo que asignamos en nuestro caso es el resultado de la expresión (CASE)
+                             WHEN letra_mayuscula = 1 THEN UPPER(dni_letra)
+                             ELSE LOWER(dni_letra)
+                         END;
+
+
+    -- empaqueto todo para devolverlo
+    RETURN numero_normalizado || separador || letra_normalizada;
+END;
+/
 -- SELECT nombre, apellidos, normalizar_dni(dni) AS dni_normalizado 
 -- FROM Personas_A_Cargar 
 -- WHERE es_dni_valido(dni) = 1;
