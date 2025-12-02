@@ -1,0 +1,66 @@
+# Triggers
+
+Básicamente son programas que podemos asociar a ciertos eventos en la base de datos, para que se ejecuten automáticamente cuando esos eventos ocurren.
+
+Eventos?
+- INSERT: Cuando se inserta un nuevo registro en una tabla.
+- UPDATE: Cuando se actualiza un registro existente.
+- DELETE: Cuando se elimina un registro de una tabla.
+
+Los defino a nivel de tabla, y pueden ser antes (BEFORE) o después (AFTER) del evento.
+
+Vamos a usar sintaxis PLSQL para definir el cuerpo del trigger.
+Pero... en estos casos, cuando usamos PLSQL dentro de un trigger, cambia un poquito la sintaxis con respecto a otro tipo de bloques PLSQL. 
+Además, en este caso, tendremos que usar los alias :NEW y :OLD para referirnos a los valores nuevos y viejos de las columnas afectadas por el trigger.
+
+```plsql
+CREATE OR REPLACE TRIGGER nombre_del_trigger
+BEFORE|AFTER INSERT|UPDATE|DELETE ON nombre_de_la_tabla -- inlsuco podemos poner varios, con OR
+FOR EACH ROW
+
+BEGIN
+  -- cuerpo del trigger
+  -- Aqui dentro es donde podremos usar las variables :NEW y :OLD
+  -- Con esas variables me referiré a los valores de las columnas:
+    -- :NEW.columna  --> valor nuevo (después del cambio)
+    -- :OLD.columna  --> valor viejo (antes del cambio)
+END;
+/
+```
+
+
+---
+
+# Diagrama de nuestra BBDD
+
+Lo vamos a crear usando MERMAID.
+Esta librería nos permite escribir diagramas en texto plano, y luego renderizarlos en imágenes.
+
+Además, el lenguaje que me da esta librería se soporta por una cantidad enorme de maquetadores de documentos MarkDown.
+
+
+
+```mermaid
+erDiagram
+    Direction LR
+
+    TIPOS_CURSOS {
+        NUMBER ID PK
+        VARCHAR CODIGO
+        VARCHAR NOMBRE
+        VARCHAR DESCRIPCION
+    }
+
+    CURSOS {
+        NUMBER ID PK
+        VARCHAR CODIGO
+        VARCHAR NOMBRE
+        NUMBER DURACION
+        NUMBER TIPO
+        NUMBER PRECIO_PARA_EMPRESAS
+        NUMBER PRECIO_PARA_PARTICULARES
+        VARCHAR DESCRIPCION
+    }
+
+    TIPOS_CURSOS ||--o{ CURSOS : "tiene"
+```
