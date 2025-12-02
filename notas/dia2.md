@@ -28,6 +28,32 @@ END;
 /
 ```
 
+# FUNCTIONS
+
+Una función es un bloque PLSQL que devuelve un valor.
+Puede recibir parámetros de entrada, y puede tener variables locales.
+
+```plsql
+CREATE OR REPLACE FUNCTION nombre_de_la_funcion (
+    parametro1 IN TIPO,
+    parametro2 IN TIPO
+) RETURN TIPO_RETORNO
+IS
+    -- Declaración de variables locales
+    variable_local TIPO;
+BEGIN
+    -- Cuerpo de la función
+    variable_local := parametro1 + parametro2; -- Ejemplo de operación
+    RETURN variable_local; -- Devuelve el valor
+END;
+/
+```
+
+# PROCEDURES
+
+Un procedimiento es un bloque PLSQL que NO devuelve un valor.
+Puede recibir parámetros de entrada, y puede tener variables locales.
+Y algo raro... puede recibir parámetros de salida (OUT), que son variables que se pasan por referencia, y que el procedimiento puede modificar para devolver valores a quien lo llamó.
 
 ---
 
