@@ -217,11 +217,15 @@ IS
     dni_letra       CHAR(1);
 BEGIN
     validar_dni(dni, dni_valido, dni_numero, dni_letra);
-    IF dni_valido THEN
-        RETURN 1;
-    ELSE
-        RETURN 0;
-    END IF;
+    --IF dni_valido THEN
+    --    RETURN 1;
+    --ELSE
+    --    RETURN 0;
+    --END IF;
+    RETURN CASE 
+               WHEN dni_valido THEN 1
+               ELSE 0
+           END;
 END;
 /
 
@@ -236,12 +240,14 @@ END;
 -- - si quiero puntos en el número o no --- Esta en version 1 no!
 
 
+-- SELECT normalizar_dni('12345678Z', 1, '-', 1) AS dni_normalizado FROM DUAL;
+
 CREATE OR REPLACE FUNCTION normalizar_dni (
-    dni IN VARCHAR2,
-    rellenar_con_ceros IN NUMBER DEFAULT 1,
-    separador IN VARCHAR2 DEFAULT '',
-    letra_mayuscula IN NUMBER DEFAULT 1,
-    puntos_en_numero IN NUMBER DEFAULT 0
+    dni                 IN VARCHAR2,
+    rellenar_con_ceros  IN NUMBER   DEFAULT 1,
+    separador           IN VARCHAR2 DEFAULT '',
+    letra_mayuscula     IN NUMBER   DEFAULT 1,
+    puntos_en_numero    IN NUMBER   DEFAULT 0
 ) RETURN VARCHAR2
 IS
     dni_valido          BOOLEAN;
@@ -259,15 +265,26 @@ BEGIN
     -- Normalización del número:
     numero_normalizado := TO_CHAR(dni_numero);
     -- Aplicar relleno con ceros a la izquierda si se ha pedido
-    IF rellenar_con_ceros = 1 THEN
+    --IF rellenar_con_ceros = 1 THEN
         -- Opción 1                      0000000123
         -- Siempre le pongo delante 7 ceros y luego corto los que sobren
         -- numero_normalizado := SUBSTR('0000000' || numero_normalizado, -8, 8); -- Coge 8 (8), desde los 8 últimos (-8)
         -- Opción 2
-        numero_normalizado := LPAD(numero_normalizado, 8, '0'); -- Rellenar por la izquierda hasta tener 8 caracteres con ceros
+    --    numero_normalizado := LPAD(numero_normalizado, 8, '0'); -- Rellenar por la izquierda hasta tener 8 caracteres con ceros
                                                                 -- Otra función a conocer, similar es RPAD (rellena por la derecha)
-    END IF;
+    -- END IF;
     -- Aplicar los separadores de miles y millones
+    IF puntos_en_numero = 1 THEN
+        IF rellenar_con_ceros = 1 THEN
+            numero_normalizado := TO_CHAR(dni_numero, '000G000G000');
+        ELSE
+            numero_normalizado := TO_CHAR(dni_numero, '99G999G999');
+        END IF;
+    ELSE 
+        IF rellenar_con_ceros = 1 THEN
+            numero_normalizado := LPAD(numero_normalizado, 8, '0');
+        END IF;
+    END IF;
 
 
     -- Normalización de la letra:
