@@ -117,4 +117,39 @@ erDiagram
         VARCHAR TELEFONO PK
     }
     EMPRESAS ||--o{ EMPRESAS_TELEFONOS : "tiene"
+
+    ESTADOS_CONVOCATORIA {
+        NUMBER ID PK
+        VARCHAR CODIGO
+        VARCHAR NOMBRE
+    }
+
+    CONVOCATORIAS {
+        NUMBER ID PK
+        NUMBER CURSO_ID FK
+        DATE FECHA_INICIO
+        DATE FECHA_FIN
+        NUMBER ESTADO_ID FK
+    }
+
+    ESTADOS_CONVOCATORIA ||--o{ CONVOCATORIAS : "tiene"
+    CURSOS ||--o{ CONVOCATORIAS : "tiene"
+
+    ALUMNOS {
+        NUMBER ID PK
+        VARCHAR NOMBRE
+        VARCHAR APELLIDOS
+        VARCHAR DNI
+        VARCHAR EMAIL
+    }
+
+    ALUMNOS_Empresas {
+        NUMBER ALUMNO_ID PK
+        NUMBER EMPRESA_ID PK
+    }
+
+    ALUMNOS ||--o{ ALUMNOS_Empresas : "pertenece a"
+    EMPRESAS ||--o{ ALUMNOS_Empresas : "tiene"
 ```
+
+
