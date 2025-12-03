@@ -143,13 +143,44 @@ erDiagram
         VARCHAR EMAIL
     }
 
-    ALUMNOS_Empresas {
+    ALUMNOS_EMPRESAS {
         NUMBER ALUMNO_ID PK
         NUMBER EMPRESA_ID PK
     }
 
-    ALUMNOS ||--o{ ALUMNOS_Empresas : "pertenece a"
-    EMPRESAS ||--o{ ALUMNOS_Empresas : "tiene"
+    ALUMNOS ||--o{ ALUMNOS_EMPRESAS : "pertenece a"
+    EMPRESAS ||--o{ ALUMNOS_EMPRESAS : "tiene"
+
+    ESTADOS_MATRICULA {
+        NUMBER ID PK
+        VARCHAR CODIGO
+        VARCHAR NOMBRE
+    }
+
+    MATRICULAS {
+        NUMBER ID PK
+        NUMBER ALUMNO_ID FK
+        NUMBER EMPRESA_ID FK
+        NUMBER CONVOCATORIA_ID FK
+        NUMBER ESTADO_ID FK
+        DATE FECHA_MATRICULA
+        NUMBER PRECIO
+        NUMBER DESCUENTO
+        NUMBER PRECIO_FINAL
+    }
+
+    ALUMNOS ||--o{ MATRICULAS : "tiene"
+    ALUMNOS_EMPRESAS ||--o{ MATRICULAS : "tiene"
+    CONVOCATORIAS ||--o{ MATRICULAS : "tiene"
+    ESTADOS_MATRICULA ||--o{ MATRICULAS : "tiene"
+
+    EVALUACIONES {
+        NUMBER MATRICULA_ID PK FK
+        DATE FECHA_EVALUACION PK
+        NUMBER NOTA
+        VARCHAR OBSERVACIONES
+    }
+
+    MATRICULAS ||--o{ EVALUACIONES : "tiene"
+
 ```
-
-
