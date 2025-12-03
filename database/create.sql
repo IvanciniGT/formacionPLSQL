@@ -254,7 +254,7 @@ IS
     dni_numero          NUMBER(8);
     dni_letra           CHAR(1);
     letra_normalizada   CHAR(1);
-    numero_normalizado  VARCHAR2(10);
+    numero_normalizado  VARCHAR2(11);
 BEGIN
     validar_dni(dni, dni_valido, dni_numero, dni_letra);
     IF NOT dni_valido THEN
@@ -276,7 +276,7 @@ BEGIN
     -- Aplicar los separadores de miles y millones
     IF puntos_en_numero = 1 THEN
         IF rellenar_con_ceros = 1 THEN
-            numero_normalizado := TO_CHAR(dni_numero, '000G000G000');
+            numero_normalizado := TO_CHAR(dni_numero, '00G000G000');
         ELSE
             numero_normalizado := TO_CHAR(dni_numero, '99G999G999');
         END IF;
