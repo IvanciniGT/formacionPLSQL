@@ -96,4 +96,25 @@ erDiagram
         VARCHAR APELLIDOS
         VARCHAR DNI
     }
+
+    PROFESORES_CURSOS {
+        NUMBER PROFESOR_ID PK 
+        NUMBER CURSO_ID PK
+    }
+
+    PROFESORES ||--o{ PROFESORES_CURSOS : "imparte"
+    CURSOS ||--o{ PROFESORES_CURSOS : "es impartido por"
+
+    EMPRESAS {
+        NUMBER ID PK
+        VARCHAR NOMBRE
+        VARCHAR CIF
+        VARCHAR DIRECCION
+        VARCHAR EMAIL
+    }
+    EMPRESAS_TELEFONOS {
+        NUMBER EMPRESA_ID PK
+        VARCHAR TELEFONO PK
+    }
+    EMPRESAS ||--o{ EMPRESAS_TELEFONOS : "tiene"
 ```

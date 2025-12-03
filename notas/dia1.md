@@ -586,9 +586,9 @@ BBDD de cursos!
 
 Academia:
     - [x] Cursos
-    - [ ] Empresas (con alumnos)
+    - [x] Empresas (con alumnos)
     - [ ] Alumnos (que pueden o no pertenecer a una empresa... o incluso... a varias empresas)
-    - [ ] Profesores
+    - [x] Profesores
     - [ ] Matrículas
     - [ ] Evaluaciones / Aprobados (global) (La calificación de un alumno en un curso)
     - [ ] Convocatorias de curso
