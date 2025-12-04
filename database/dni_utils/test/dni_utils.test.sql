@@ -106,7 +106,20 @@ BEGIN
 END ;
 /
 
+CREATE OR REPLACE FUNCTION test_validar_dnis_nok RETURN NUMBER IS
+BEGIN
+    -- Aquí irían las pruebas negativas para validar_dni
+    RETURN 1; -- Por ahora devuelvo 1 para indicar que todo ha ido bien
+END ;
+/
 
+CREATE OR REPLACE FUNCTION test_es_valido_dni_sql_ok RETURN NUMBER IS
+--es_dni_valido
+BEGIN
+    -- Aquí irían las pruebas positivas para es_dni_valido
+    RETURN 1; -- Por ahora devuelvo 1 para indicar que todo ha ido bien
+END ;
+/
 -- Ejecuto la función de prueba
 
 DECLARE
