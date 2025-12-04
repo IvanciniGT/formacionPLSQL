@@ -1,8 +1,9 @@
 # DNI Utils
 
 ![Oracle](https://img.shields.io/badge/Oracle-PL%2FSQL-red?logo=oracle)
+
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
+
 ![Tests](https://img.shields.io/badge/tests-passing-brightgreen)
 
 ## Tabla de Contenidos
