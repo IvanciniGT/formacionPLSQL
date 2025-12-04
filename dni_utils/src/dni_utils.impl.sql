@@ -44,6 +44,11 @@ CREATE OR REPLACE PACKAGE BODY dni_utils IS
         -- Extraer número (eliminando caracteres no numéricos)
         numero := TO_NUMBER(REGEXP_REPLACE(dni, patron_no_numerico, ''));
 
+        -- Mirar si el número está en rango válido
+        IF numero < 1 OR numero > 99999999 THEN
+            RETURN;
+        END IF;
+
         -- Extraer letra (último carácter en mayúsculas)
         letra := SUBSTR(dni, -1, 1);
 
@@ -53,6 +58,12 @@ CREATE OR REPLACE PACKAGE BODY dni_utils IS
 
         -- Verificar correspondencia de la letra
         valido := (letra = letra_correcta);
+    EXCEPTION
+        WHEN OTHERS THEN
+            -- En caso de error, marcar como inválido
+            valido := FALSE;
+            numero := NULL;
+            letra  := NULL;
     END;
 
     ------------------------------------------------------------------------------------------------

@@ -499,6 +499,29 @@ CREATE TABLE Alumnos (
     -- Restricciones al EMAIL aplicadas mediante un TRIGGER (similar al del DNI, pero con regex para emails)
 );
 
+CREATE OR REPLACE TRIGGER TRG_Alumnos_DNI_Validar_Normalizar
+BEFORE INSERT OR UPDATE ON Alumnos
+FOR EACH ROW
+DECLARE
+    dni_valido      BOOLEAN;
+    dni_numero      NUMBER(8);
+    dni_letra       CHAR(1);
+BEGIN
+    -- Si el DNI Es null, no hacemos nada, y que el propio NOT NULL de la tabla se encargue de rechazarlo
+    IF :NEW.DNI IS NULL THEN
+        RETURN;
+    END IF;
+    -- Validar el formato del DNI
+    dni_utils.validar_dni(:NEW.DNI, dni_valido, dni_numero, dni_letra);
+    IF NOT dni_valido THEN
+        RAISE_APPLICATION_ERROR(-20001, 'DNI inválido: ' || :NEW.DNI); -- Este mensaje le saldrá al usuario si el DNI no es válido
+    ELSE
+        -- Si es válido, normalizar el valor del DNI
+        :NEW.DNI := TO_CHAR(dni_numero) || dni_letra; -- Número sin ceros a la izquierda + letra en mayúsculas, sin puntos ni separadores
+    END IF;
+END;
+/
+
 -- Contraseña! Cómo la gestiono?
 -- Primero, hoy en día... mejor esto se lo dejo a una herramienta experta en gestión de identidades y accesos (IAM).
 -- Y a nivel de mi app, solo gestiono tokens de acceso temporales (JWT, OAuth2, OpenID Connect, etc)
