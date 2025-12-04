@@ -59,7 +59,7 @@ Y algo raro... puede recibir parámetros de salida (OUT), que son variables que 
 
 # Diagrama de nuestra BBDD
 
-Lo vamos a crear usando MERMAID.
+Lo vamos a crear usando ***MERMAID***.
 Esta librería nos permite escribir diagramas en texto plano, y luego renderizarlos en imágenes.
 
 Además, el lenguaje que me da esta librería se soporta por una cantidad enorme de maquetadores de documentos MarkDown.
@@ -173,14 +173,5 @@ erDiagram
     ALUMNOS_EMPRESAS ||--o{ MATRICULAS : "tiene"
     CONVOCATORIAS ||--o{ MATRICULAS : "tiene"
     ESTADOS_MATRICULA ||--o{ MATRICULAS : "tiene"
-
-    EVALUACIONES {
-        NUMBER MATRICULA_ID PK FK
-        DATE FECHA_EVALUACION PK
-        NUMBER NOTA
-        VARCHAR OBSERVACIONES
-    }
-
-    MATRICULAS ||--o{ EVALUACIONES : "tiene"
 
 ```

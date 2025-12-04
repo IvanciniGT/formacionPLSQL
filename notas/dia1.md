@@ -590,7 +590,7 @@ Academia:
     - [x] Alumnos (que pueden o no pertenecer a una empresa... o incluso... a varias empresas)
     - [x] Profesores
     - [x] Matrículas
-    - [ ] Evaluaciones / Aprobados (global) (La calificación de un alumno en un curso)
+    - [x] Evaluaciones / Aprobados (global) (La calificación de un alumno en un curso)
     - [x] Convocatorias de curso
 
 # SOLID

@@ -46,7 +46,7 @@ CREATE TABLE Cursos (
                                                 -- Si devuelve FALSE, se rechaza el valor
     CONSTRAINT CHK_Cursos_Duracion              CHECK (DURACION IS NULL OR DURACION > 0),
     CONSTRAINT CHK_Cursos_Precio_Empresas       CHECK (PRECIO_PARA_EMPRESAS IS NULL OR PRECIO_PARA_EMPRESAS >= 0),
-    CONSTRAINT CHK_Cursos_Precio_Particulares   CHECK (PRECIO_PARA_PARTICULARES IS NULL OR PRECIO_PARA_PARTICULARES >= 0)
+    CONSTRAINT CHK_Cursos_Precio_Particulares   CHECK (PRECIO_PARA_PARTICULARES IS NULL OR PRECIO_PARA_PARTICULARES >= 0),
     CONSTRAINT CHK_Cursos_Codigo_Mayusculas     CHECK (CODIGO = UPPER(CODIGO) AND REGEXP_LIKE(CODIGO, '^[A-Z0-9_-]+$'))
 );
 
@@ -130,52 +130,9 @@ CREATE TABLE Profesores (
     -- Restricciones al DNI aplicadas mediante un TRIGGER
 );
 
-
--- Cómo es un DNI? 1-8 dígitos + letra mayúscula. Puntos y guiones opcionales
--- Para guardarlo podría usar un VARCHAR2(9). Cuánto ocuparía? 1byte por carácter = 9 bytes
--- Y si guardo el número como NUMBER(8) y la letra como CHAR(1)?  Número: 1 byte por cada 2 dígitos + 1 byte para la letra = 5 bytes
--- Cuantas personas tengo? 10.000.. Me la pela. 10.000.000... me lo planteo!
-
 -- Meteremos un trigger a esa tabla para?
 -- - Validar que lo que llega es correcto (formato + letra correcta)
 -- - Normalizarlo (quitar puntos y guiones, poner letra en mayúsculas)
-
-
-CREATE OR REPLACE PROCEDURE validar_dni (
-    dni IN VARCHAR2,
-    valido OUT BOOLEAN,
-    numero OUT NUMBER,
-    letra OUT CHAR
-)
-IS
-    -- Declaración de variables locales
-    letras_validas      CONSTANT    VARCHAR2(23) := 'TRWAGMYFPDXBNJZSQVHLCKE';
-    patron_dni          CONSTANT    VARCHAR2(100) := '^(([0-9]{1,8})|([0-9]{1,2}([.][0-9]{3}){2})|([0-9]{1,3}[.][0-9]{3}))[ -]?[A-Za-z]$';
-    patron_no_numerico  CONSTANT    VARCHAR2(100) := '[^0-9]';
-    letra_correcta                  CHAR(1);
-BEGIN
-    valido := FALSE; -- Valor por defecto
-    -- Cuerpo de la función
-    IF dni IS NULL THEN
-        RETURN ;
-    END IF;
-    -- Validar si tiene pinta de DNI (Expresión regular)
-    -- Si no tiene pinta, devolver FALSE
-    IF NOT REGEXP_LIKE(dni, patron_dni) THEN
-        RETURN ;
-    END IF;
-    -- Si si tiene pinta de dni: Debo verificar la letra
-    -- Extraer el número, quitando puntos y guiones, espacios y cogiendo solo los dígitos
-    -- Reemplazamos todo lo que haya en el texto que no sean dígitos por nada
-    numero := TO_NUMBER(REGEXP_REPLACE(dni, patron_no_numerico, '')); -- Todo lo que no sean números me lo como!
-    -- Extraer la letra (último carácter)
-    letra := UPPER(SUBSTR(dni, -1, 1)); -- Tomo un caracter(1) desde el último (-1)... y además transformo a mayúsculas
-    -- Calcular la letra correcta que debería traer ese dni, en base al número
-    letra_correcta := SUBSTR(letras_validas, MOD(numero, 23) + 1, 1); -- +1 porque los índices en SUBSTR empiezan en 1
-    -- Verificar que es la que se ha suminitrado
-    valido := (letra = letra_correcta);
-END;
-/
 
 CREATE OR REPLACE TRIGGER TRG_Profesores_DNI_Validar_Normalizar
 BEFORE INSERT OR UPDATE ON Profesores
@@ -190,7 +147,7 @@ BEGIN
         RETURN;
     END IF;
     -- Validar el formato del DNI
-    validar_dni(:NEW.DNI, dni_valido, dni_numero, dni_letra);
+    dni_utils.validar_dni(:NEW.DNI, dni_valido, dni_numero, dni_letra);
     IF NOT dni_valido THEN
         RAISE_APPLICATION_ERROR(-20001, 'DNI inválido: ' || :NEW.DNI); -- Este mensaje le saldrá al usuario si el DNI no es válido
     ELSE
@@ -200,149 +157,8 @@ BEGIN
 END;
 /
 
--- Esto estaría acabado! al menos lo referente a la tabla profesores.ALTER
--- Pero... ya que tengo ese procedimiento, me podría interesar generar un par de funciones adicionales, que los usuarios puedan usar en sus queries SQL.
+-- Esto estaría acabado! al menos lo referente a la tabla profesores.
 
--- funcion: es_dni_valido(dni IN VARCHAR2) RETURN NUMBER 
--- OJO. En SQL no puedo usar una función que devuelva BOOLEAN.
--- Como se comporta ante un nulo? Devuelva 0;
--- En SQL los booleanos no existen. Así que devuelvo un NUMBER: 1 = TRUE, 0 = FALSE
-
-CREATE OR REPLACE FUNCTION es_dni_valido (
-    dni IN VARCHAR2
-) RETURN NUMBER
-IS
-    dni_valido      BOOLEAN;
-    dni_numero      NUMBER(8);
-    dni_letra       CHAR(1);
-BEGIN
-    validar_dni(dni, dni_valido, dni_numero, dni_letra);
-    --IF dni_valido THEN
-    --    RETURN 1;
-    --ELSE
-    --    RETURN 0;
-    --END IF;
-    RETURN CASE 
-               WHEN dni_valido THEN 1
-               ELSE 0
-           END;
-END;
-/
-
--- funcion: normalizar_dni(dni IN VARCHAR2) RETURN VARCHAR2
--- Si el dni no es válido, devuelve NULL
--- Si el DNI es null devuelve NULL
--- Esa funcion debe aceptar más argumentos:
--- - dni IN VARCHAR2
--- - si quiero rellenar con ceros                  -> Podeis echar un ojo a la función LPAD (no es obligatorio)
--- - si quiero separar con guiones o espacios o nada
--- - si quiero la letra en mayúsculas (UPPER) o minúsculas (LOWER)
--- - si quiero puntos en el número o no --- Esta en version 1 no!
-
-
--- SELECT normalizar_dni('12345678Z', 1, '-', 1) AS dni_normalizado FROM DUAL;
-
-CREATE OR REPLACE FUNCTION normalizar_dni (
-    dni                 IN VARCHAR2,
-    rellenar_con_ceros  IN NUMBER   DEFAULT 1,
-    separador           IN VARCHAR2 DEFAULT '',
-    letra_mayuscula     IN NUMBER   DEFAULT 1,
-    puntos_en_numero    IN NUMBER   DEFAULT 0
-) RETURN VARCHAR2
-IS
-    dni_valido          BOOLEAN;
-    dni_numero          NUMBER(8);
-    dni_letra           CHAR(1);
-    letra_normalizada   CHAR(1);
-    numero_normalizado  VARCHAR2(11);
-BEGIN
-    validar_dni(dni, dni_valido, dni_numero, dni_letra);
-    IF NOT dni_valido THEN
-        RETURN NULL;
-    END IF;
-    -- Aquí realmente es donde normalizo el valor del DNI
-
-    -- Normalización del número:
-    numero_normalizado := TO_CHAR(dni_numero);
-    -- Aplicar relleno con ceros a la izquierda si se ha pedido
-    --IF rellenar_con_ceros = 1 THEN
-        -- Opción 1                      0000000123
-        -- Siempre le pongo delante 7 ceros y luego corto los que sobren
-        -- numero_normalizado := SUBSTR('0000000' || numero_normalizado, -8, 8); -- Coge 8 (8), desde los 8 últimos (-8)
-        -- Opción 2
-    --    numero_normalizado := LPAD(numero_normalizado, 8, '0'); -- Rellenar por la izquierda hasta tener 8 caracteres con ceros
-                                                                -- Otra función a conocer, similar es RPAD (rellena por la derecha)
-    -- END IF;
-    -- Aplicar los separadores de miles y millones
-    IF puntos_en_numero = 1 THEN
-        IF rellenar_con_ceros = 1 THEN
-            numero_normalizado := TO_CHAR(dni_numero, '00G000G000');
-        ELSE
-            numero_normalizado := TO_CHAR(dni_numero, '99G999G999');
-        END IF;
-    ELSE 
-        IF rellenar_con_ceros = 1 THEN
-            numero_normalizado := LPAD(numero_normalizado, 8, '0');
-        END IF;
-    END IF;
-
-
-    -- Normalización de la letra:
-
-    -- OPCION 1, que ya conocíamos!
-    -- IF letra_mayuscula = 1 THEN                   -- trabaja a nivel de statement: Es decir, lo que pongo dentro de las condiciones
-    --                                           -- es un statement. Por ejemplo, en este caso hago una asignación
-    --    letra_normalizada := UPPER(dni_letra);
-    -- ELSE
-    --    letra_normalizada := LOWER(dni_letra);
-    -- END IF;
-    -- OPCION 2: CASE:
-    letra_normalizada := CASE                    -- trabaja a nivel de expresión: Lo que pongo dentro del CASE es una expresión
-                                                 -- lo que asignamos en nuestro caso es el resultado de la expresión (CASE)
-                             WHEN letra_mayuscula = 1 THEN UPPER(dni_letra)
-                             ELSE LOWER(dni_letra)
-                         END;
-
-
-    -- empaqueto todo para devolverlo
-    RETURN numero_normalizado || separador || letra_normalizada;
-END;
-/
--- SELECT nombre, apellidos, normalizar_dni(dni) AS dni_normalizado 
--- FROM Personas_A_Cargar 
--- WHERE es_dni_valido(dni) = 1;
-
-
-
-
--- Patrón de un dni? regex101 (Web para verificar expresiones regulares)
--- ^(([0-9]{1,8})|([0-9]{1,2}([.][0-9]{3}){2})|([0-9]{1,3}[.][0-9]{3}))[ -]?[A-Za-z]$
--- [0-9]{1,8} -- 23000000
--- [0-9]{1,2}([.][0-9]{3}){2} -- 23.000.000     2.300.000
--- [0-9]{1,3}[.][0-9]{3}-- 23.000T
--- Al crear un patrón de regex:
--- - Un patron es una secuencia de subpatrones
--- - Cada subpatrón es:
---   - Una secuencia de caracteres
---       - hola           En el texto debe aparecer 'hola'
---       - [hola]         En el texto debe aparecer cualquier letra de las que hay entre corchetes
---       - [a-zA-Z]       En el texto debe aparecer cualquier letra mayúscula o minúscula
---       - [0-9]          En el texto debe aparecer cualquier dígito
---       - [^hola]        En el texto NO debe aparecer ninguna letra de las que hay entre corchetes
---       - .              En el texto puede aparecer cualquier carácter
---   - Seguido de un modificador de cantidad
---       - No poner nada  Aparece exactamente 1 vez
---       - ?              Aparece 0 o 1 veces
---       - +              Aparece 1 o más veces
---       - *              Aparece 0 o más veces
---       - {n}            Aparece exactamente n veces
---       - {n,}           Aparece n o más veces
---       - {n,m}          Aparece entre n y m veces
--- Otros operadores:
---   - ^              Indica el inicio del texto
---   - $              Indica el final del texto
---   - ()             Agrupa subpatrones
---   - |              Operador OR entre subpatrones
 
 -- Relación nxm entre profesores y cursos
 
@@ -353,7 +169,7 @@ CREATE TABLE Profesores_Cursos (
  -- CONSTRAINS
     CONSTRAINT PK_Profesores_Cursos PRIMARY KEY (PROFESOR_ID, CURSO_ID),
     CONSTRAINT FK_Profesores_Cursos_Profesor FOREIGN KEY (PROFESOR_ID) REFERENCES Profesores(ID),
-    CONSTRAINT FK_Profesores_Cursos_Curso FOREIGN KEY (CURSO) REFERENCES Cursos(ID)
+    CONSTRAINT FK_Profesores_Cursos_Curso FOREIGN KEY (CURSO_ID) REFERENCES Cursos(ID)
 );
 
 -- Tabla Empresas
@@ -649,7 +465,7 @@ CREATE TABLE Convocatorias (
     CONSTRAINT PK_Convocatorias PRIMARY         KEY (ID),
     CONSTRAINT FK_Convocatorias_Curso FOREIGN   KEY (CURSO_ID)      REFERENCES Cursos(ID),
     CONSTRAINT FK_Convocatorias_Estado FOREIGN  KEY (ESTADO_ID)     REFERENCES Estados_Convocatoria(ID),
-    CONSTRAINT CHK_Convocatorias_Fechas         CHECK (FECHA_FIN > FECHA_INICIO)
+    CONSTRAINT CHK_Convocatorias_Fechas         CHECK (FECHA_FIN >= FECHA_INICIO)
 );
 
 -- Más adelante iremos matriculando alumnos en las convocatorias
