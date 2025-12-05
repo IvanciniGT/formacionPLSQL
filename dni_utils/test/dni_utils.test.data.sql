@@ -12,226 +12,231 @@
 
 CREATE TABLE dni_test_data_ok (
     dni_input VARCHAR2(15),
-    es_valido NUMBER,
     numero    NUMBER,
-    letra     CHAR(1)
+    letra     CHAR(1),
+    normalizacion_basica VARCHAR2(15),
+    normalizacion_con_ceros VARCHAR2(15),
+    normalizacion_con_guion VARCHAR2(15),
+    normalizacion_minuscula VARCHAR2(15),
+    normalizacion_con_puntos VARCHAR2(15),
+    normalizacion_todo VARCHAR2(20)
 );
 
 -- DNIs válidos con 8 dígitos (formato estándar)
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('23000000T', 1, 23000000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('23000000t', 1, 23000000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('23000000 T', 1, 23000000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('23000000 t', 1, 23000000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('23000000-T', 1, 23000000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('23000000-t', 1, 23000000, 'T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('23000000T', 23000000, 'T', '23000000T', '23000000T', '23000000-T', '23000000t', '23.000.000T', '23.000.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('23000000t', 23000000, 'T', '23000000T', '23000000T', '23000000-T', '23000000t', '23.000.000T', '23.000.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('23000000 T', 23000000, 'T', '23000000T', '23000000T', '23000000-T', '23000000t', '23.000.000T', '23.000.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('23000000 t', 23000000, 'T', '23000000T', '23000000T', '23000000-T', '23000000t', '23.000.000T', '23.000.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('23000000-T', 23000000, 'T', '23000000T', '23000000T', '23000000-T', '23000000t', '23.000.000T', '23.000.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('23000000-t', 23000000, 'T', '23000000T', '23000000T', '23000000-T', '23000000t', '23.000.000T', '23.000.000-T');
 
 -- DNIs válidos con 8 dígitos (formato con puntos)
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('23.000.000T', 1, 23000000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('23.000.000t', 1, 23000000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('23.000.000 T', 1, 23000000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('23.000.000 t', 1, 23000000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('23.000.000-T', 1, 23000000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('23.000.000-t', 1, 23000000, 'T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('23.000.000T', 23000000, 'T', '23000000T', '23000000T', '23000000-T', '23000000t', '23.000.000T', '23.000.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('23.000.000t', 23000000, 'T', '23000000T', '23000000T', '23000000-T', '23000000t', '23.000.000T', '23.000.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('23.000.000 T', 23000000, 'T', '23000000T', '23000000T', '23000000-T', '23000000t', '23.000.000T', '23.000.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('23.000.000 t', 23000000, 'T', '23000000T', '23000000T', '23000000-T', '23000000t', '23.000.000T', '23.000.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('23.000.000-T', 23000000, 'T', '23000000T', '23000000T', '23000000-T', '23000000t', '23.000.000T', '23.000.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('23.000.000-t', 23000000, 'T', '23000000T', '23000000T', '23000000-T', '23000000t', '23.000.000T', '23.000.000-T');
 
 -- DNIs válidos con 7 dígitos (sin ceros a la izquierda)
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('2300000T', 1, 2300000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('2300000t', 1, 2300000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('2300000 T', 1, 2300000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('2300000 t', 1, 2300000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('2300000-T', 1, 2300000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('2300000-t', 1, 2300000, 'T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('2300000T', 2300000, 'T', '2300000T', '02300000T', '2300000-T', '2300000t', '2.300.000T', '02.300.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('2300000t', 2300000, 'T', '2300000T', '02300000T', '2300000-T', '2300000t', '2.300.000T', '02.300.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('2300000 T', 2300000, 'T', '2300000T', '02300000T', '2300000-T', '2300000t', '2.300.000T', '02.300.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('2300000 t', 2300000, 'T', '2300000T', '02300000T', '2300000-T', '2300000t', '2.300.000T', '02.300.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('2300000-T', 2300000, 'T', '2300000T', '02300000T', '2300000-T', '2300000t', '2.300.000T', '02.300.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('2300000-t', 2300000, 'T', '2300000T', '02300000T', '2300000-T', '2300000t', '2.300.000T', '02.300.000-T');
 
 -- DNIs válidos con 7 dígitos (con cero a la izquierda)
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('02300000T', 1, 2300000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('02300000t', 1, 2300000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('02300000 T', 1, 2300000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('02300000 t', 1, 2300000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('02300000-T', 1, 2300000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('02300000-t', 1, 2300000, 'T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('02300000T', 2300000, 'T', '2300000T', '02300000T', '2300000-T', '2300000t', '2.300.000T', '02.300.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('02300000t', 2300000, 'T', '2300000T', '02300000T', '2300000-T', '2300000t', '2.300.000T', '02.300.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('02300000 T', 2300000, 'T', '2300000T', '02300000T', '2300000-T', '2300000t', '2.300.000T', '02.300.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('02300000 t', 2300000, 'T', '2300000T', '02300000T', '2300000-T', '2300000t', '2.300.000T', '02.300.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('02300000-T', 2300000, 'T', '2300000T', '02300000T', '2300000-T', '2300000t', '2.300.000T', '02.300.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('02300000-t', 2300000, 'T', '2300000T', '02300000T', '2300000-T', '2300000t', '2.300.000T', '02.300.000-T');
 
 -- DNIs válidos con 7 dígitos (formato con puntos, sin cero inicial)
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('2.300.000T', 1, 2300000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('2.300.000t', 1, 2300000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('2.300.000 T', 1, 2300000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('2.300.000 t', 1, 2300000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('2.300.000-T', 1, 2300000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('2.300.000-t', 1, 2300000, 'T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('2.300.000T', 2300000, 'T', '2300000T', '02300000T', '2300000-T', '2300000t', '2.300.000T', '02.300.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('2.300.000t', 2300000, 'T', '2300000T', '02300000T', '2300000-T', '2300000t', '2.300.000T', '02.300.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('2.300.000 T', 2300000, 'T', '2300000T', '02300000T', '2300000-T', '2300000t', '2.300.000T', '02.300.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('2.300.000 t', 2300000, 'T', '2300000T', '02300000T', '2300000-T', '2300000t', '2.300.000T', '02.300.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('2.300.000-T', 2300000, 'T', '2300000T', '02300000T', '2300000-T', '2300000t', '2.300.000T', '02.300.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('2.300.000-t', 2300000, 'T', '2300000T', '02300000T', '2300000-T', '2300000t', '2.300.000T', '02.300.000-T');
 
 -- DNIs válidos con 7 dígitos (formato con puntos y cero inicial)
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('02.300.000T', 1, 2300000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('02.300.000t', 1, 2300000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('02.300.000 T', 1, 2300000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('02.300.000 t', 1, 2300000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('02.300.000-T', 1, 2300000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('02.300.000-t', 1, 2300000, 'T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('02.300.000T', 2300000, 'T', '2300000T', '02300000T', '2300000-T', '2300000t', '2.300.000T', '02.300.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('02.300.000t', 2300000, 'T', '2300000T', '02300000T', '2300000-T', '2300000t', '2.300.000T', '02.300.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('02.300.000 T', 2300000, 'T', '2300000T', '02300000T', '2300000-T', '2300000t', '2.300.000T', '02.300.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('02.300.000 t', 2300000, 'T', '2300000T', '02300000T', '2300000-T', '2300000t', '2.300.000T', '02.300.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('02.300.000-T', 2300000, 'T', '2300000T', '02300000T', '2300000-T', '2300000t', '2.300.000T', '02.300.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('02.300.000-t', 2300000, 'T', '2300000T', '02300000T', '2300000-T', '2300000t', '2.300.000T', '02.300.000-T');
 
 -- DNIs válidos con 6 dígitos (sin ceros a la izquierda)
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('230000T', 1, 230000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('230000t', 1, 230000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('230000 T', 1, 230000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('230000 t', 1, 230000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('230000-T', 1, 230000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('230000-t', 1, 230000, 'T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('230000T', 230000, 'T', '230000T', '00230000T', '230000-T', '230000t', '230.000T', '00.230.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('230000t', 230000, 'T', '230000T', '00230000T', '230000-T', '230000t', '230.000T', '00.230.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('230000 T', 230000, 'T', '230000T', '00230000T', '230000-T', '230000t', '230.000T', '00.230.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('230000 t', 230000, 'T', '230000T', '00230000T', '230000-T', '230000t', '230.000T', '00.230.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('230000-T', 230000, 'T', '230000T', '00230000T', '230000-T', '230000t', '230.000T', '00.230.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('230000-t', 230000, 'T', '230000T', '00230000T', '230000-T', '230000t', '230.000T', '00.230.000-T');
 
 -- DNIs válidos con 6 dígitos (con ceros hasta 8 dígitos)
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00230000T', 1, 230000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00230000t', 1, 230000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00230000 T', 1, 230000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00230000 t', 1, 230000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00230000-T', 1, 230000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00230000-t', 1, 230000, 'T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00230000T', 230000, 'T', '230000T', '00230000T', '230000-T', '230000t', '230.000T', '00.230.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00230000t', 230000, 'T', '230000T', '00230000T', '230000-T', '230000t', '230.000T', '00.230.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00230000 T', 230000, 'T', '230000T', '00230000T', '230000-T', '230000t', '230.000T', '00.230.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00230000 t', 230000, 'T', '230000T', '00230000T', '230000-T', '230000t', '230.000T', '00.230.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00230000-T', 230000, 'T', '230000T', '00230000T', '230000-T', '230000t', '230.000T', '00.230.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00230000-t', 230000, 'T', '230000T', '00230000T', '230000-T', '230000t', '230.000T', '00.230.000-T');
 
 -- DNIs válidos con 6 dígitos (formato con puntos, sin ceros)
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('230.000T', 1, 230000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('230.000t', 1, 230000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('230.000 T', 1, 230000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('230.000 t', 1, 230000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('230.000-T', 1, 230000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('230.000-t', 1, 230000, 'T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('230.000T', 230000, 'T', '230000T', '00230000T', '230000-T', '230000t', '230.000T', '00.230.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('230.000t', 230000, 'T', '230000T', '00230000T', '230000-T', '230000t', '230.000T', '00.230.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('230.000 T', 230000, 'T', '230000T', '00230000T', '230000-T', '230000t', '230.000T', '00.230.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('230.000 t', 230000, 'T', '230000T', '00230000T', '230000-T', '230000t', '230.000T', '00.230.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('230.000-T', 230000, 'T', '230000T', '00230000T', '230000-T', '230000t', '230.000T', '00.230.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('230.000-t', 230000, 'T', '230000T', '00230000T', '230000-T', '230000t', '230.000T', '00.230.000-T');
 
 -- DNIs válidos con 6 dígitos (formato con puntos y ceros hasta 8 dígitos)
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.230.000T', 1, 230000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.230.000t', 1, 230000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.230.000 T', 1, 230000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.230.000 t', 1, 230000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.230.000-T', 1, 230000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.230.000-t', 1, 230000, 'T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.230.000T', 230000, 'T', '230000T', '00230000T', '230000-T', '230000t', '230.000T', '00.230.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.230.000t', 230000, 'T', '230000T', '00230000T', '230000-T', '230000t', '230.000T', '00.230.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.230.000 T', 230000, 'T', '230000T', '00230000T', '230000-T', '230000t', '230.000T', '00.230.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.230.000 t', 230000, 'T', '230000T', '00230000T', '230000-T', '230000t', '230.000T', '00.230.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.230.000-T', 230000, 'T', '230000T', '00230000T', '230000-T', '230000t', '230.000T', '00.230.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.230.000-t', 230000, 'T', '230000T', '00230000T', '230000-T', '230000t', '230.000T', '00.230.000-T');
 
 -- DNIs válidos con 5 dígitos (sin ceros a la izquierda)
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('23000T', 1, 23000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('23000t', 1, 23000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('23000 T', 1, 23000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('23000 t', 1, 23000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('23000-T', 1, 23000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('23000-t', 1, 23000, 'T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('23000T', 23000, 'T', '23000T', '00023000T', '23000-T', '23000t', '23.000T', '00.023.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('23000t', 23000, 'T', '23000T', '00023000T', '23000-T', '23000t', '23.000T', '00.023.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('23000 T', 23000, 'T', '23000T', '00023000T', '23000-T', '23000t', '23.000T', '00.023.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('23000 t', 23000, 'T', '23000T', '00023000T', '23000-T', '23000t', '23.000T', '00.023.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('23000-T', 23000, 'T', '23000T', '00023000T', '23000-T', '23000t', '23.000T', '00.023.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('23000-t', 23000, 'T', '23000T', '00023000T', '23000-T', '23000t', '23.000T', '00.023.000-T');
 
 -- DNIs válidos con 5 dígitos (con ceros hasta 8 dígitos)
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00023000T', 1, 23000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00023000t', 1, 23000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00023000 T', 1, 23000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00023000 t', 1, 23000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00023000-T', 1, 23000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00023000-t', 1, 23000, 'T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00023000T', 23000, 'T', '23000T', '00023000T', '23000-T', '23000t', '23.000T', '00.023.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00023000t', 23000, 'T', '23000T', '00023000T', '23000-T', '23000t', '23.000T', '00.023.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00023000 T', 23000, 'T', '23000T', '00023000T', '23000-T', '23000t', '23.000T', '00.023.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00023000 t', 23000, 'T', '23000T', '00023000T', '23000-T', '23000t', '23.000T', '00.023.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00023000-T', 23000, 'T', '23000T', '00023000T', '23000-T', '23000t', '23.000T', '00.023.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00023000-t', 23000, 'T', '23000T', '00023000T', '23000-T', '23000t', '23.000T', '00.023.000-T');
 
 -- DNIs válidos con 5 dígitos (formato con puntos, sin ceros)
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('23.000T', 1, 23000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('23.000t', 1, 23000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('23.000 T', 1, 23000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('23.000 t', 1, 23000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('23.000-T', 1, 23000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('23.000-t', 1, 23000, 'T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('23.000T', 23000, 'T', '23000T', '00023000T', '23000-T', '23000t', '23.000T', '00.023.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('23.000t', 23000, 'T', '23000T', '00023000T', '23000-T', '23000t', '23.000T', '00.023.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('23.000 T', 23000, 'T', '23000T', '00023000T', '23000-T', '23000t', '23.000T', '00.023.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('23.000 t', 23000, 'T', '23000T', '00023000T', '23000-T', '23000t', '23.000T', '00.023.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('23.000-T', 23000, 'T', '23000T', '00023000T', '23000-T', '23000t', '23.000T', '00.023.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('23.000-t', 23000, 'T', '23000T', '00023000T', '23000-T', '23000t', '23.000T', '00.023.000-T');
 
 -- DNIs válidos con 5 dígitos (formato con puntos y ceros hasta 8 dígitos)
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.023.000T', 1, 23000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.023.000t', 1, 23000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.023.000 T', 1, 23000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.023.000 t', 1, 23000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.023.000-T', 1, 23000, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.023.000-t', 1, 23000, 'T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.023.000T', 23000, 'T', '23000T', '00023000T', '23000-T', '23000t', '23.000T', '00.023.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.023.000t', 23000, 'T', '23000T', '00023000T', '23000-T', '23000t', '23.000T', '00.023.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.023.000 T', 23000, 'T', '23000T', '00023000T', '23000-T', '23000t', '23.000T', '00.023.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.023.000 t', 23000, 'T', '23000T', '00023000T', '23000-T', '23000t', '23.000T', '00.023.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.023.000-T', 23000, 'T', '23000T', '00023000T', '23000-T', '23000t', '23.000T', '00.023.000-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.023.000-t', 23000, 'T', '23000T', '00023000T', '23000-T', '23000t', '23.000T', '00.023.000-T');
 
 -- DNIs válidos con 4 dígitos (sin ceros a la izquierda)
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('2300T', 1, 2300, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('2300t', 1, 2300, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('2300 T', 1, 2300, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('2300 t', 1, 2300, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('2300-T', 1, 2300, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('2300-t', 1, 2300, 'T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('2300T', 2300, 'T', '2300T', '00002300T', '2300-T', '2300t', '2.300T', '00.002.300-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('2300t', 2300, 'T', '2300T', '00002300T', '2300-T', '2300t', '2.300T', '00.002.300-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('2300 T', 2300, 'T', '2300T', '00002300T', '2300-T', '2300t', '2.300T', '00.002.300-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('2300 t', 2300, 'T', '2300T', '00002300T', '2300-T', '2300t', '2.300T', '00.002.300-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('2300-T', 2300, 'T', '2300T', '00002300T', '2300-T', '2300t', '2.300T', '00.002.300-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('2300-t', 2300, 'T', '2300T', '00002300T', '2300-T', '2300t', '2.300T', '00.002.300-T');
 
 -- DNIs válidos con 4 dígitos (con ceros hasta 8 dígitos)
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00002300T', 1, 2300, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00002300t', 1, 2300, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00002300 T', 1, 2300, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00002300 t', 1, 2300, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00002300-T', 1, 2300, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00002300-t', 1, 2300, 'T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00002300T', 2300, 'T', '2300T', '00002300T', '2300-T', '2300t', '2.300T', '00.002.300-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00002300t', 2300, 'T', '2300T', '00002300T', '2300-T', '2300t', '2.300T', '00.002.300-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00002300 T', 2300, 'T', '2300T', '00002300T', '2300-T', '2300t', '2.300T', '00.002.300-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00002300 t', 2300, 'T', '2300T', '00002300T', '2300-T', '2300t', '2.300T', '00.002.300-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00002300-T', 2300, 'T', '2300T', '00002300T', '2300-T', '2300t', '2.300T', '00.002.300-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00002300-t', 2300, 'T', '2300T', '00002300T', '2300-T', '2300t', '2.300T', '00.002.300-T');
 
 -- DNIs válidos con 4 dígitos (formato con puntos y ceros hasta 8 dígitos)
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.002.300T', 1, 2300, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.002.300t', 1, 2300, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.002.300 T', 1, 2300, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.002.300 t', 1, 2300, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.002.300-T', 1, 2300, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.002.300-t', 1, 2300, 'T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.002.300T', 2300, 'T', '2300T', '00002300T', '2300-T', '2300t', '2.300T', '00.002.300-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.002.300t', 2300, 'T', '2300T', '00002300T', '2300-T', '2300t', '2.300T', '00.002.300-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.002.300 T', 2300, 'T', '2300T', '00002300T', '2300-T', '2300t', '2.300T', '00.002.300-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.002.300 t', 2300, 'T', '2300T', '00002300T', '2300-T', '2300t', '2.300T', '00.002.300-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.002.300-T', 2300, 'T', '2300T', '00002300T', '2300-T', '2300t', '2.300T', '00.002.300-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.002.300-t', 2300, 'T', '2300T', '00002300T', '2300-T', '2300t', '2.300T', '00.002.300-T');
 
 -- DNIs válidos con 3 dígitos (sin ceros a la izquierda)
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('230T', 1, 230, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('230t', 1, 230, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('230 T', 1, 230, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('230 t', 1, 230, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('230-T', 1, 230, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('230-t', 1, 230, 'T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('230T', 230, 'T', '230T', '00000230T', '230-T', '230t', '230T', '00.000.230-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('230t', 230, 'T', '230T', '00000230T', '230-T', '230t', '230T', '00.000.230-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('230 T', 230, 'T', '230T', '00000230T', '230-T', '230t', '230T', '00.000.230-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('230 t', 230, 'T', '230T', '00000230T', '230-T', '230t', '230T', '00.000.230-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('230-T', 230, 'T', '230T', '00000230T', '230-T', '230t', '230T', '00.000.230-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('230-t', 230, 'T', '230T', '00000230T', '230-T', '230t', '230T', '00.000.230-T');
 
 -- DNIs válidos con 3 dígitos (con ceros hasta 8 dígitos)
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00000230T', 1, 230, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00000230t', 1, 230, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00000230 T', 1, 230, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00000230 t', 1, 230, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00000230-T', 1, 230, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00000230-t', 1, 230, 'T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00000230T', 230, 'T', '230T', '00000230T', '230-T', '230t', '230T', '00.000.230-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00000230t', 230, 'T', '230T', '00000230T', '230-T', '230t', '230T', '00.000.230-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00000230 T', 230, 'T', '230T', '00000230T', '230-T', '230t', '230T', '00.000.230-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00000230 t', 230, 'T', '230T', '00000230T', '230-T', '230t', '230T', '00.000.230-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00000230-T', 230, 'T', '230T', '00000230T', '230-T', '230t', '230T', '00.000.230-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00000230-t', 230, 'T', '230T', '00000230T', '230-T', '230t', '230T', '00.000.230-T');
 
 -- DNIs válidos con 3 dígitos (formato con puntos, sin ceros)
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('230T', 1, 230, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('230t', 1, 230, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('230 T', 1, 230, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('230 t', 1, 230, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('230-T', 1, 230, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('230-t', 1, 230, 'T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('230T', 230, 'T', '230T', '00000230T', '230-T', '230t', '230T', '00.000.230-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('230t', 230, 'T', '230T', '00000230T', '230-T', '230t', '230T', '00.000.230-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('230 T', 230, 'T', '230T', '00000230T', '230-T', '230t', '230T', '00.000.230-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('230 t', 230, 'T', '230T', '00000230T', '230-T', '230t', '230T', '00.000.230-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('230-T', 230, 'T', '230T', '00000230T', '230-T', '230t', '230T', '00.000.230-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('230-t', 230, 'T', '230T', '00000230T', '230-T', '230t', '230T', '00.000.230-T');
 
 -- DNIs válidos con 3 dígitos (formato con puntos y ceros hasta 8 dígitos)
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.000.230T', 1, 230, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.000.230t', 1, 230, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.000.230 T', 1, 230, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.000.230 t', 1, 230, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.000.230-T', 1, 230, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.000.230-t', 1, 230, 'T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.000.230T', 230, 'T', '230T', '00000230T', '230-T', '230t', '230T', '00.000.230-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.000.230t', 230, 'T', '230T', '00000230T', '230-T', '230t', '230T', '00.000.230-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.000.230 T', 230, 'T', '230T', '00000230T', '230-T', '230t', '230T', '00.000.230-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.000.230 t', 230, 'T', '230T', '00000230T', '230-T', '230t', '230T', '00.000.230-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.000.230-T', 230, 'T', '230T', '00000230T', '230-T', '230t', '230T', '00.000.230-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.000.230-t', 230, 'T', '230T', '00000230T', '230-T', '230t', '230T', '00.000.230-T');
 
 -- DNIs válidos con 2 dígitos (sin ceros a la izquierda)
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('23T', 1, 23, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('23t', 1, 23, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('23 T', 1, 23, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('23 t', 1, 23, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('23-T', 1, 23, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('23-t', 1, 23, 'T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('23T', 23, 'T', '23T', '00000023T', '23-T', '23t', '23T', '00.000.023-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('23t', 23, 'T', '23T', '00000023T', '23-T', '23t', '23T', '00.000.023-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('23 T', 23, 'T', '23T', '00000023T', '23-T', '23t', '23T', '00.000.023-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('23 t', 23, 'T', '23T', '00000023T', '23-T', '23t', '23T', '00.000.023-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('23-T', 23, 'T', '23T', '00000023T', '23-T', '23t', '23T', '00.000.023-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('23-t', 23, 'T', '23T', '00000023T', '23-T', '23t', '23T', '00.000.023-T');
 
 -- DNIs válidos con 2 dígitos (con ceros hasta 8 dígitos)
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00000023T', 1, 23, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00000023t', 1, 23, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00000023 T', 1, 23, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00000023 t', 1, 23, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00000023-T', 1, 23, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00000023-t', 1, 23, 'T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00000023T', 23, 'T', '23T', '00000023T', '23-T', '23t', '23T', '00.000.023-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00000023t', 23, 'T', '23T', '00000023T', '23-T', '23t', '23T', '00.000.023-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00000023 T', 23, 'T', '23T', '00000023T', '23-T', '23t', '23T', '00.000.023-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00000023 t', 23, 'T', '23T', '00000023T', '23-T', '23t', '23T', '00.000.023-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00000023-T', 23, 'T', '23T', '00000023T', '23-T', '23t', '23T', '00.000.023-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00000023-t', 23, 'T', '23T', '00000023T', '23-T', '23t', '23T', '00.000.023-T');
 
 -- DNIs válidos con 2 dígitos (formato con puntos y ceros hasta 8 dígitos)
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.000.023T', 1, 23, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.000.023t', 1, 23, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.000.023 T', 1, 23, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.000.023 t', 1, 23, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.000.023-T', 1, 23, 'T');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.000.023-t', 1, 23, 'T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.000.023T', 23, 'T', '23T', '00000023T', '23-T', '23t', '23T', '00.000.023-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.000.023t', 23, 'T', '23T', '00000023T', '23-T', '23t', '23T', '00.000.023-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.000.023 T', 23, 'T', '23T', '00000023T', '23-T', '23t', '23T', '00.000.023-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.000.023 t', 23, 'T', '23T', '00000023T', '23-T', '23t', '23T', '00.000.023-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.000.023-T', 23, 'T', '23T', '00000023T', '23-T', '23t', '23T', '00.000.023-T');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.000.023-t', 23, 'T', '23T', '00000023T', '23-T', '23t', '23T', '00.000.023-T');
 
 -- DNIs válidos con 1 dígito (MOD(1,23)=1 -> letra R, sin ceros a la izquierda)
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('1R', 1, 1, 'R');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('1r', 1, 1, 'R');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('1 R', 1, 1, 'R');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('1 r', 1, 1, 'R');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('1-R', 1, 1, 'R');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('1-r', 1, 1, 'R');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('1R', 1, 'R', '1R', '00000001R', '1-R', '1r', '1R', '00.000.001-R');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('1r', 1, 'R', '1R', '00000001R', '1-R', '1r', '1R', '00.000.001-R');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('1 R', 1, 'R', '1R', '00000001R', '1-R', '1r', '1R', '00.000.001-R');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('1 r', 1, 'R', '1R', '00000001R', '1-R', '1r', '1R', '00.000.001-R');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('1-R', 1, 'R', '1R', '00000001R', '1-R', '1r', '1R', '00.000.001-R');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('1-r', 1, 'R', '1R', '00000001R', '1-R', '1r', '1R', '00.000.001-R');
 
 -- DNIs válidos con 1 dígito (con ceros hasta 8 dígitos)
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00000001R', 1, 1, 'R');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00000001r', 1, 1, 'R');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00000001 R', 1, 1, 'R');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00000001 r', 1, 1, 'R');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00000001-R', 1, 1, 'R');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00000001-r', 1, 1, 'R');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00000001R', 1, 'R', '1R', '00000001R', '1-R', '1r', '1R', '00.000.001-R');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00000001r', 1, 'R', '1R', '00000001R', '1-R', '1r', '1R', '00.000.001-R');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00000001 R', 1, 'R', '1R', '00000001R', '1-R', '1r', '1R', '00.000.001-R');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00000001 r', 1, 'R', '1R', '00000001R', '1-R', '1r', '1R', '00.000.001-R');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00000001-R', 1, 'R', '1R', '00000001R', '1-R', '1r', '1R', '00.000.001-R');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00000001-r', 1, 'R', '1R', '00000001R', '1-R', '1r', '1R', '00.000.001-R');
 
 -- DNIs válidos con 1 dígito (formato con puntos y ceros hasta 8 dígitos)
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.000.001R', 1, 1, 'R');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.000.001r', 1, 1, 'R');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.000.001 R', 1, 1, 'R');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.000.001 r', 1, 1, 'R');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.000.001-R', 1, 1, 'R');
-INSERT INTO dni_test_data_ok (dni_input, es_valido, numero, letra) VALUES ('00.000.001-r', 1, 1, 'R');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.000.001R', 1, 'R', '1R', '00000001R', '1-R', '1r', '1R', '00.000.001-R');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.000.001r', 1, 'R', '1R', '00000001R', '1-R', '1r', '1R', '00.000.001-R');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.000.001 R', 1, 'R', '1R', '00000001R', '1-R', '1r', '1R', '00.000.001-R');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.000.001 r', 1, 'R', '1R', '00000001R', '1-R', '1r', '1R', '00.000.001-R');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.000.001-R', 1, 'R', '1R', '00000001R', '1-R', '1r', '1R', '00.000.001-R');
+INSERT INTO dni_test_data_ok (dni_input, numero, letra, normalizacion_basica, normalizacion_con_ceros, normalizacion_con_guion, normalizacion_minuscula, normalizacion_con_puntos, normalizacion_todo) VALUES ('00.000.001-r', 1, 'R', '1R', '00000001R', '1-R', '1r', '1R', '00.000.001-R');
 
 ------------------------------------------------------------------------------------------------
 -- DATOS DE PRUEBA INVÁLIDOS (DNIs NOK)

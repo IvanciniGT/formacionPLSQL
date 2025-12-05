@@ -1,371 +1,428 @@
 -- Esto es para que SQL*Plus muestre los mensajes de DBMS_OUTPUT.PUT_LINE
 SET SERVEROUTPUT ON; 
 
-
 -- Cargamos los datos de prueba para el paquete dni_utils
--- Los tenemos en el script dni_utils.test.data.sql
-@dni_utils.test.data.sql -- Con esto le decimos a SQL*Plus que ejecute ese script
--- CREATE TABLE dni_test_data_ok (
---    dni_input VARCHAR2(15),
---    es_valido NUMBER,
---    numero    NUMBER,
---    letra     CHAR(1)
---);
-
--- Vamos a definir unos procedimientos de prueba, para las funciones del paquete dni_utils
-
--- Para cada función/procedure que tenga, montaré 2 procedimientos de prueba:
--- Uno para los casos positivos (donde espero que funcione bien)
--- Otro para los casos negativos (donde espero que falle)
-
--- Tenemos 3 funciones/procedimientos en el paquete dni_utils:
--- 1. validar_dni (procedure)
--- 2. es_dni_valido (function)
--- 3. normalizar_dni (function)
-
--- Necesitamos 6 procedimientos de prueba en total.
-
--- Además, voy a montar un procedimiento maestro que llame a todos los procedimientos de prueba,
--- de forma que pueda ejecutar todas las pruebas con una sola llamada.
-
--- Cual debería ser la salida de cada procedimiento de prueba?
--- Necesitamos saber si cada uno de esos 6 procedimientos de prueba ha funcionado o no como se esperaba.
-
--- En caso que no haya funcionado, deberíamos mostrar un mensaje de error indicando qué prueba ha fallado y por qué...
--- Necesitaríamos saber qué casos de prueba han fallado.
+@dni_utils.test.data.sql
 
 
-CREATE OR REPLACE FUNCTION test_validar_dnis_ok RETURN NUMBER IS
-  numero_casos_total        NUMBER := 0;
-  numero_casos_fallidos     NUMBER := 0;
-  numero_casos_exitosos     NUMBER := 0;
-BEGIN
-    DBMS_OUTPUT.PUT_LINE('Pruebas de validar_dni - casos OK: EN PROGRESO');
-    -- Necesitamos ejecutar el procedimiento validar_dni para cada uno de los casos de prueba
-    -- que tenemos en la tabla dni_test_data_ok
-    -- Hay 2 formas de plantear esto. Creando un cursos explicito, o usando un cursor implícito con un FOR.
-    -- En este primer caso, lo haremos con el cursos implicito. 
-    -- La siguiente función de prueba la haremos con un cursor explicito.
-    FOR registro IN (
-        SELECT dni_input, es_valido, numero, letra FROM dni_test_data_ok
-    ) LOOP
-        numero_casos_total := numero_casos_total + 1;
-        -- Aqui es donde pongo lo que quiero hacer con cada registro
-        -- Llamo a mi procedimiento validar_dni
-        DECLARE -- Con este bloque DECLARE puedo definir variables locales
-                -- Que tiene un ámbito de aplicación/vida más limitado
-                -- Solo dentro de este bloque BEGIN...END
-            resultado_validacion    BOOLEAN;
-            resultado_numero        NUMBER;
-            resultado_letra         CHAR(1);
-        BEGIN
-            dni_utils.validar_dni(
+CREATE GLOBAL TEMPORARY TABLE test_cases_ko (
+    funcion_de_test_actual   VARCHAR2(100),
+    dni_input                VARCHAR2(20),
+    motivo                   VARCHAR2(100),
+    valor_esperado           VARCHAR2(100),
+    valor_obtenido           VARCHAR2(100)
+) ON COMMIT PRESERVE ROWS;
+
+
+-- Crear el paquete conteniendo las funciones de prueba
+CREATE OR REPLACE PACKAGE dni_utils_test AS
+    PROCEDURE run_tests;
+END dni_utils_test;
+
+--- Implementación del paquete de pruebas
+CREATE OR REPLACE PACKAGE BODY dni_utils_test IS
+    -- ------------------------------------------------------------------------------------------------
+    -- Variables para conteo de las pruebas que voy realizando y de los casos exitosos/fallidos
+    -- ------------------------------------------------------------------------------------------------
+    numero_de_test_ejecutados             NUMBER := 0;
+    numero_de_test_exitosos               NUMBER := 0;
+    numero_de_test_fallidos               NUMBER := 0;
+
+    funcion_de_test_actual                VARCHAR2(100);
+    descripcion_test_actual               VARCHAR2(400);
+
+    numero_casos_total_en_test_actual     NUMBER := 0;
+    numero_casos_fallidos_en_test_actual  NUMBER := 0;
+    numero_casos_exitosos_en_test_actual  NUMBER := 0;
+
+    aux_boolean_resultado                 BOOLEAN;
+
+    -- ------------------------------------------------------------------------------------------------
+    -- Generación de logs:
+    -- ------------------------------------------------------------------------------------------------
+    
+    PROCEDURE mostrar_logs_de_inicio_test IS
+    BEGIN
+        DBMS_OUTPUT.PUT_LINE('-------------------------------------------------------------------------------------------------------');
+        DBMS_OUTPUT.PUT_LINE('Ejecutando test #' || numero_de_test_ejecutados || ': ' || descripcion_test_actual);
+    END;
+
+    PROCEDURE mostrar_logs_de_fin_test IS
+    BEGIN
+        DBMS_OUTPUT.PUT_LINE('Ejecución finalizada del test #' || numero_de_test_ejecutados || ': ' || descripcion_test_actual);
+        DBMS_OUTPUT.PUT_LINE('  Casos totales: ' || numero_casos_total_en_test_actual );
+        DBMS_OUTPUT.PUT_LINE('  Casos exitosos: ' || numero_casos_exitosos_en_test_actual );
+        DBMS_OUTPUT.PUT_LINE('  Casos fallidos: ' || numero_casos_fallidos_en_test_actual );
+        IF numero_casos_fallidos_en_test_actual = 0 THEN
+            DBMS_OUTPUT.PUT_LINE('Test  #' || numero_de_test_ejecutados || ': ' || descripcion_test_actual || ' - EXITOSO');
+        ELSE
+            DBMS_OUTPUT.PUT_LINE('Test  #' || numero_de_test_ejecutados || ': ' || descripcion_test_actual || ' - FALLIDO');
+        END IF;
+        DBMS_OUTPUT.PUT_LINE('-------------------------------------------------------------------------------------------------------');
+    END;
+
+    PROCEDURE log_test_case_error (
+        p_funcion_de_test    IN VARCHAR2,
+        p_dni_test_actual    IN VARCHAR2,
+        p_mensaje_error      IN VARCHAR2,
+        p_valor_esperado     IN VARCHAR2,
+        p_valor_obtenido     IN VARCHAR2
+    ) IS
+    BEGIN
+        DBMS_OUTPUT.PUT_LINE('FALLO EN ' || p_funcion_de_test || 
+                             ' para el DNI=' || p_dni_test_actual ||
+                             ': ' || p_mensaje_error ||
+                             ' - se esperaba ' || p_valor_esperado || ', pero se obtuvo ' || p_valor_obtenido);
+    END;
+
+    PROCEDURE mostrar_log_de_inicio IS
+    BEGIN
+        DBMS_OUTPUT.PUT_LINE('-------------------------------------------------------------------------------------------------------');
+        DBMS_OUTPUT.PUT_LINE('Iniciando ejecución de pruebas para el paquete dni_utils');
+    END;
+
+    PROCEDURE mostrar_log_de_fin IS
+    BEGIN
+        DBMS_OUTPUT.PUT_LINE('-------------------------------------------------------------------------------------------------------');
+        DBMS_OUTPUT.PUT_LINE('Ejecución de pruebas para el paquete dni_utils finalizada:');
+        DBMS_OUTPUT.PUT_LINE('  Número de tests ejecutados: ' || numero_de_test_ejecutados);
+        DBMS_OUTPUT.PUT_LINE('  Número de tests exitosos: ' || numero_de_test_exitosos);
+        DBMS_OUTPUT.PUT_LINE('  Número de tests fallidos: ' || numero_de_test_fallidos); 
+        DBMS_OUTPUT.PUT_LINE('-------------------------------------------------------------------------------------------------------');    
+        IF numero_de_test_fallidos = 0 THEN
+            DBMS_OUTPUT.PUT_LINE('RESUMEN: Todas las pruebas del paquete dni_utils han sido EXITOSAS.');
+        ELSE
+            DBMS_OUTPUT.PUT_LINE('RESUMEN: Algunas pruebas del paquete dni_utils han FALLADO.');
+        END IF;
+        DBMS_OUTPUT.PUT_LINE('-------------------------------------------------------------------------------------------------------');
+        DBMS_OUTPUT.PUT_LINE('  Detalle de casos fallidos:');
+
+        -- Mostrar los datos que tengo en la tabla temporal test_cases_ko
+        FOR registro IN (
+            SELECT funcion_de_test_actual, dni_input, motivo, valor_esperado, valor_obtenido
+            FROM test_cases_ko
+        ) LOOP
+            log_test_case_error(
+                registro.funcion_de_test_actual,
                 registro.dni_input,
-                resultado_validacion,
-                resultado_numero,
-                resultado_letra
+                registro.motivo,
+                registro.valor_esperado,
+                registro.valor_obtenido
             );
-            -- Ahora comparo los resultados obtenidos con los esperados
-            IF resultado_validacion != (registro.es_valido = 1) THEN
-                numero_casos_fallidos := numero_casos_fallidos + 1;
-                -- BDMS_OUTPUT.PUT_LINE(MENSAJE) Esta función me permite mostrar mensajes en la consola de SQL*Plus
-                DBMS_OUTPUT.PUT_LINE('FALLO EN validar_dni con DNI=' || registro.dni_input || 
-                                     ': se esperaba es_valido=' || registro.es_valido || 
-                                     ', pero se obtuvo es_valido=' || CASE WHEN resultado_validacion THEN '1' ELSE '0' END);
-            ELSIF resultado_validacion = TRUE THEN
-                -- Solo comparo numero y letra si el DNI es válido
-                IF resultado_numero != registro.numero THEN
-                    numero_casos_fallidos := numero_casos_fallidos + 1;
-                    DBMS_OUTPUT.PUT_LINE('FALLO EN validar_dni con DNI=' || registro.dni_input || 
-                                         ': se esperaba numero=' || registro.numero || 
-                                         ', pero se obtuvo numero=' || resultado_numero);
-                ELSIF resultado_letra != registro.letra THEN
-                    numero_casos_fallidos := numero_casos_fallidos + 1;
-                    DBMS_OUTPUT.PUT_LINE('FALLO EN validar_dni con DNI=' || registro.dni_input || 
-                                         ': se esperaba letra=' || registro.letra || 
-                                         ', pero se obtuvo letra=' || resultado_letra);
+        END LOOP;
+        -- Cuando las pruebas finalicen.. y cierre la sesión.. se borrarán los datos de la tabla temporal automáticamente.
+
+        DBMS_OUTPUT.PUT_LINE('-------------------------------------------------------------------------------------------------------');
+    END;
+
+    -- ------------------------------------------------------------------------------------------------
+    -- Funciones de tipo Assert
+    -- ------------------------------------------------------------------------------------------------
+
+    PROCEDURE register_test_case_error (
+        p_dni_test_actual    IN VARCHAR2,
+        p_mensaje_error      IN VARCHAR2,
+        p_valor_esperado     IN VARCHAR2,
+        p_valor_obtenido     IN VARCHAR2
+    ) IS
+    BEGIN
+        INSERT INTO test_cases_ko (
+            funcion_de_test_actual,
+            dni_input,
+            motivo,
+            valor_esperado,
+            valor_obtenido
+        ) VALUES (
+            funcion_de_test_actual,
+            p_dni_test_actual,
+            p_mensaje_error,
+            p_valor_esperado,
+            p_valor_obtenido
+        );
+    END;
+
+    PROCEDURE assert_equals (
+        p_valor_esperado   IN BOOLEAN,
+        p_valor_obtenido   IN BOOLEAN,
+        dni_test_actual    IN VARCHAR2,
+        p_mensaje_error    IN VARCHAR2,
+        p_resultado OUT BOOLEAN
+    )
+    IS
+    BEGIN
+        numero_casos_total_en_test_actual := numero_casos_total_en_test_actual + 1;
+        IF p_valor_esperado != p_valor_obtenido THEN
+            numero_casos_fallidos_en_test_actual := numero_casos_fallidos_en_test_actual + 1;
+            register_test_case_error(
+                dni_test_actual,
+                p_mensaje_error,
+                CASE WHEN p_valor_esperado THEN 'TRUE' ELSE 'FALSE' END,
+                CASE WHEN p_valor_obtenido THEN 'TRUE' ELSE 'FALSE' END
+            );
+            p_resultado := FALSE;
+        END IF;
+        p_resultado := TRUE;
+    END;
+
+     PROCEDURE assert_equals (
+        p_valor_esperado   IN NUMBER,
+        p_valor_obtenido   IN NUMBER,
+        dni_test_actual    IN VARCHAR2,
+        p_mensaje_error    IN VARCHAR2,
+        p_resultado OUT BOOLEAN
+    ) IS
+    BEGIN
+        numero_casos_total_en_test_actual := numero_casos_total_en_test_actual + 1;
+        IF p_valor_esperado != p_valor_obtenido THEN
+            numero_casos_fallidos_en_test_actual := numero_casos_fallidos_en_test_actual + 1;
+            register_test_case_error(
+                dni_test_actual,
+                p_mensaje_error,
+                TO_CHAR(p_valor_esperado),
+                TO_CHAR(p_valor_obtenido)
+            );
+            p_resultado := FALSE;
+        END IF;
+        p_resultado := TRUE;
+    END;
+
+    PROCEDURE assert_equals (
+        p_valor_esperado   IN VARCHAR2,
+        p_valor_obtenido   IN VARCHAR2,
+        dni_test_actual    IN VARCHAR2,
+        p_mensaje_error    IN VARCHAR2,
+        p_resultado OUT BOOLEAN
+    ) IS
+    BEGIN
+        numero_casos_total_en_test_actual := numero_casos_total_en_test_actual + 1;
+        IF p_valor_esperado != p_valor_obtenido THEN
+            numero_casos_fallidos_en_test_actual := numero_casos_fallidos_en_test_actual + 1;
+            register_test_case_error(
+                dni_test_actual,
+                p_mensaje_error,
+                p_valor_esperado,
+                p_valor_obtenido
+            );
+            p_resultado := FALSE;
+        END IF;
+        p_resultado := TRUE;
+    END;
+
+    -- ------------------------------------------------------------------------------------------------
+    -- Funciones auxiliares para la ejecución de tests
+    -- ------------------------------------------------------------------------------------------------
+
+
+    PROCEDURE reiniciar_contadores  (
+        p_funcion_de_test_actual            VARCHAR2,
+        p_descripcion_test_actual           VARCHAR2
+    ) IS
+    BEGIN
+        funcion_de_test_actual                  := p_funcion_de_test_actual;
+        descripcion_test_actual                 := p_descripcion_test_actual;
+        numero_casos_total_en_test_actual       := 0;
+        numero_casos_fallidos_en_test_actual    := 0;
+        numero_casos_exitosos_en_test_actual    := 0;
+        numero_de_test_ejecutados               := numero_de_test_ejecutados + 1;
+    END;
+
+    PROCEDURE ejecutar_funcion_test IS BEGIN
+        -- Ejecuto la función/procedimiento que tenga por nombre p_funcion_de_test_actual
+        -- A priori no puedo ejecutar una función por su nombre en una variable.
+        -- Pero hay un comando EXECUTE IMMEDIATE, que me permite ejecutar código dinámico.
+        -- A este comando le puedo pasar un texto con el código PL/SQL a ejecutar.
+        EXECUTE IMMEDIATE 'BEGIN dni_utils_test.' || funcion_de_test_actual || '; END;';
+        numero_casos_exitosos_en_test_actual := numero_casos_total_en_test_actual - numero_casos_fallidos_en_test_actual;
+        -- OJO con el EXECUTE IMMEDIATE: Puede ser un hueco de seguridad GRANDE si se usa con datos de usuario.
+        -- En nuestro caso, tengo eso en un procedimiento PRIVADO de mi paquete... eso me da toda la tranquilidad que necesito.
+        IF numero_casos_fallidos_en_test_actual = 0 THEN
+            numero_de_test_exitosos := numero_de_test_exitosos + 1;
+        ELSE
+            numero_de_test_fallidos := numero_de_test_fallidos + 1;
+        END IF;        
+    END;
+
+    PROCEDURE ejecutar_test (
+        p_funcion_de_test_actual            VARCHAR2,
+        p_descripcion_test_actual           VARCHAR2
+    ) IS
+    BEGIN
+        reiniciar_contadores( p_funcion_de_test_actual, p_descripcion_test_actual );
+        -- Generamos entradas en el log:
+        mostrar_logs_de_inicio_test;
+        ejecutar_funcion_test;
+        mostrar_logs_de_fin_test;
+    END;
+
+    PROCEDURE ejecutar_cada_test IS BEGIN
+        ejecutar_test('test_validar_dni_ok', 'Pruebas de el procedimiento validar_dni con datos correctos');
+        ejecutar_test('test_validar_dni_ko', 'Pruebas de el procedimiento validar_dni con datos incorrectos');
+        ejecutar_test('test_es_dni_valido_ok', 'Pruebas de la función es_dni_valido con datos correctos');
+        ejecutar_test('test_es_dni_valido_ko', 'Pruebas de la función es_dni_valido con datos incorrectos');
+        ejecutar_test('test_normalizar_dni_ok', 'Pruebas de la función normalizar_dni con datos correctos');
+        ejecutar_test('test_normalizar_dni_ko', 'Pruebas de la función normalizar_dni con datos incorrectos');
+    END;
+
+    PROCEDURE run_tests IS BEGIN
+        mostrar_log_de_inicio;
+        ejecutar_cada_test;
+        mostrar_log_de_fin;
+    END;
+
+    -- En PLSQL existe ya un paquete estándar para poder hacer pruebas unitarias: UTL_UNIT.
+    -- Que incluye montonón de funciones de tipo assert_equals, assert_not_null, etc.
+    -- Y trae sus propias fuinciones de logging, de ejecución de tests, etc.
+    -- Pero nosotros nos hemos creado nuestro propio framework de testing para entender mejor cómo funciona todo esto "bajo el capó".
+
+    -- ------------------------------------------------------------------------------------------------
+    -- Implementación de los tests individuales
+    -- ------------------------------------------------------------------------------------------------
+
+    PROCEDURE test_validar_dni_ok IS BEGIN
+        FOR registro IN (
+            SELECT dni_input, numero, letra FROM dni_test_data_ok
+        ) LOOP
+            DECLARE
+                resultado_validacion    BOOLEAN;
+                resultado_numero        NUMBER;
+                resultado_letra         CHAR(1);
+            BEGIN
+                dni_utils.validar_dni(
+                    registro.dni_input,
+                    resultado_validacion,
+                    resultado_numero,
+                    resultado_letra
+                );
+                -- Ahora comparo los resultados obtenidos con los esperados
+                assert_equals(  TRUE, resultado_validacion, registro.dni_input, 'Validación fallida. Falso negativo.' , aux_boolean_resultado );
+                IF aux_boolean_resultado THEN
+                    assert_equals( registro.numero, resultado_numero, registro.dni_input, 'Número incorrecto.', aux_boolean_resultado );
+                    IF aux_boolean_resultado THEN
+                        assert_equals( registro.letra, resultado_letra, registro.dni_input, 'Letra incorrecta.', aux_boolean_resultado );
+                    END IF;
                 END IF;
-            END IF;
-        END;
-    END LOOP;
-    numero_casos_exitosos := numero_casos_total - numero_casos_fallidos;
-    DBMS_OUTPUT.PUT_LINE('Pruebas de validar_dni - casos OK: FINALIZADAS');
-    DBMS_OUTPUT.PUT_LINE('Resumen de resultados: ');
-    DBMS_OUTPUT.PUT_LINE('. Casos totales: ' || numero_casos_total );
-    DBMS_OUTPUT.PUT_LINE('. Casos exitosos: ' || numero_casos_exitosos );
-    DBMS_OUTPUT.PUT_LINE('. Casos fallidos: ' || numero_casos_fallidos );
 
-    IF numero_casos_fallidos = 0 THEN
-        DBMS_OUTPUT.PUT_LINE('Pruebas de validar_dni - casos OK: EXITOSAS');
-    ELSE
-        DBMS_OUTPUT.PUT_LINE('Pruebas de validar_dni - casos OK: FALLIDAS');
-    END IF;
-    RETURN CASE (numero_casos_exitosos = numero_casos_total)
-           WHEN TRUE THEN 1
-           ELSE 0
-           END;
-END ;
-/
+            END;
+        END LOOP;
+    END;
 
-CREATE OR REPLACE FUNCTION test_validar_dnis_nok RETURN NUMBER IS
-  numero_casos_total        NUMBER := 0;
-  numero_casos_fallidos     NUMBER := 0;
-  numero_casos_exitosos     NUMBER := 0;
-  -- Definimos un cursor explícito para recorrer los casos de prueba NOK
-  -- Es una variable de tipo cursor, que apuntará al resultado de la consulta SQL
-  CURSOR cursor_nok IS      SELECT dni_input FROM dni_test_data_nok;
-  -- Definimos una variable para almacenar cada registro (fila) del cursor
-  -- El tipo de dato de esta variable será el mismo que el de las filas devueltas por el cursor:   %ROWTYPE
-  registro cursor_nok%ROWTYPE;
-BEGIN
-    DBMS_OUTPUT.PUT_LINE('Pruebas de validar_dni - casos NOK: EN PROGRESO');
-    -- Abrimos el cursor explícito
-    OPEN cursor_nok;
-    -- Itero, en un bucle infinito, leyendo cada registro del cursor
-    LOOP
-        -- Extraigo el siguiente registro del cursor
-        FETCH cursor_nok INTO registro;
-        -- Si no hay más registros, salgo del bucle infinito
-        EXIT WHEN cursor_nok%NOTFOUND;
-        -- A partir de ahi, opero con la variable registro, que contiene la fila actual
-        numero_casos_total := numero_casos_total + 1;
-        -- Aqui es donde pongo lo que quiero hacer con cada registro
-        -- Llamo a mi procedimiento validar_dni
-        DECLARE -- Con este bloque DECLARE puedo definir variables locales
-                -- Que tiene un ámbito de aplicación/vida más limitado
-                -- Solo dentro de este bloque BEGIN...END
-            resultado_validacion    BOOLEAN;
-            resultado_numero        NUMBER;
-            resultado_letra         CHAR(1);
-        BEGIN
-            dni_utils.validar_dni(
+    PROCEDURE test_validar_dni_ko IS 
+        CURSOR cursor_nok IS      SELECT dni_input FROM dni_test_data_nok;
+        registro cursor_nok%ROWTYPE;
+    BEGIN
+        OPEN cursor_nok;
+        LOOP
+            FETCH cursor_nok INTO registro;
+            EXIT WHEN cursor_nok%NOTFOUND;
+
+            DECLARE
+                resultado_validacion    BOOLEAN;
+                resultado_numero        NUMBER;
+                resultado_letra         CHAR(1);
+            BEGIN
+                dni_utils.validar_dni(
+                    registro.dni_input,
+                    resultado_validacion,
+                    resultado_numero,
+                    resultado_letra
+                );
+                assert_equals( FALSE, resultado_validacion, registro.dni_input, 'Validación fallida. Falso positivo.' , aux_boolean_resultado );
+            END;
+        END LOOP;
+        CLOSE cursor_nok;
+    END;
+
+    PROCEDURE test_es_dni_valido_ok IS BEGIN
+        FOR registro IN (
+            SELECT dni_input, dni_utils.es_dni_valido(dni_input) as resultado FROM dni_test_data_ok
+        ) LOOP
+            assert_equals( 1, registro.resultado, registro.dni_input, 'Validación fallida. Falso negativo.', aux_boolean_resultado );
+        END LOOP;
+    END;
+
+    PROCEDURE test_es_dni_valido_ko IS BEGIN
+        FOR registro IN (
+            SELECT dni_input, dni_utils.es_dni_valido(dni_input) as resultado FROM dni_test_data_nok
+        ) LOOP
+            assert_equals( 0, registro.resultado, registro.dni_input, 'Validación fallida. Falso positivo.' , aux_boolean_resultado );
+        END LOOP;
+    END;
+
+    PROCEDURE test_normalizar_dni_ko IS BEGIN
+        FOR registro IN (
+            SELECT dni_input, dni_utils.normalizar_dni(dni_input) as resultado FROM dni_test_data_nok
+        ) LOOP
+            assert_equals( NULL, registro.resultado, registro.dni_input, 'Normalización fallida. Se esperaba NULL para DNI inválido.', aux_boolean_resultado );
+        END LOOP;
+    END;
+
+    PROCEDURE test_normalizar_dni_ok IS BEGIN
+        FOR registro IN (
+            SELECT dni_input,
+                   dni_utils.normalizar_dni(dni_input, 0, '', 1, 0) AS normalizacion_basica_resultado,
+                   normalizacion_basica,
+                   dni_utils.normalizar_dni(dni_input, 1, '', 1, 0) AS normalizacion_con_ceros_resultado,
+                   normalizacion_con_ceros,
+                   dni_utils.normalizar_dni(dni_input, 0, '-', 1, 0) AS normalizacion_con_guion_resultado,
+                   normalizacion_con_guion,
+                   dni_utils.normalizar_dni(dni_input, 0, '', 0, 0) AS normalizacion_minuscula_resultado,
+                   normalizacion_minuscula,
+                   dni_utils.normalizar_dni(dni_input, 0, '', 1, 1) AS normalizacion_con_puntos_resultado,
+                   normalizacion_con_puntos,
+                   dni_utils.normalizar_dni(dni_input, 1, '-', 0, 1) AS normalizacion_todo_resultado,
+                   normalizacion_todo
+            FROM dni_test_data_ok
+        ) LOOP
+            assert_equals(
+                registro.normalizacion_basica,
+                registro.normalizacion_basica_resultado,
                 registro.dni_input,
-                resultado_validacion,
-                resultado_numero,
-                resultado_letra
+                'Normalización básica fallida.',
+                aux_boolean_resultado
             );
-            -- Ahora comparo los resultados obtenidos con los esperados
-            IF resultado_validacion != FALSE THEN
-                numero_casos_fallidos := numero_casos_fallidos + 1;
-                -- BDMS_OUTPUT.PUT_LINE(MENSAJE) Esta función me permite mostrar mensajes en la consola de SQL*Plus
-                DBMS_OUTPUT.PUT_LINE('FALLO EN validar_dni con DNI=' || registro.dni_input || 
-                                     ': se esperaba es_valido=' || 0 || 
-                                     ', pero se obtuvo es_valido=' || CASE WHEN resultado_validacion THEN '1' ELSE '0' END);
-            END IF;
-        END;
-    END LOOP;
-    -- Cerramos el cursor explícito
-    CLOSE cursor_nok;
-    numero_casos_exitosos := numero_casos_total - numero_casos_fallidos;
-    DBMS_OUTPUT.PUT_LINE('Pruebas de validar_dni - casos NOK: FINALIZADAS');
-    DBMS_OUTPUT.PUT_LINE('Resumen de resultados: ');
-    DBMS_OUTPUT.PUT_LINE('. Casos totales: ' || numero_casos_total );
-    DBMS_OUTPUT.PUT_LINE('. Casos exitosos: ' || numero_casos_exitosos );
-    DBMS_OUTPUT.PUT_LINE('. Casos fallidos: ' || numero_casos_fallidos );
+            assert_equals(
+                registro.normalizacion_con_ceros,
+                registro.normalizacion_con_ceros_resultado,
+                registro.dni_input,
+                'Normalización con ceros fallida.',
+                aux_boolean_resultado
+            );
+            assert_equals(
+                registro.normalizacion_con_guion,
+                registro.normalizacion_con_guion_resultado,
+                registro.dni_input,
+                'Normalización con guion fallida.',
+                aux_boolean_resultado
+            );
+            assert_equals(
+                registro.normalizacion_minuscula,
+                registro.normalizacion_minuscula_resultado,
+                registro.dni_input,
+                'Normalización en minúscula fallida.',
+                aux_boolean_resultado
+            );
+            assert_equals(
+                registro.normalizacion_con_puntos,
+                registro.normalizacion_con_puntos_resultado,
+                registro.dni_input,
+                'Normalización con puntos fallida.',
+                aux_boolean_resultado
+            );
+            assert_equals(
+                registro.normalizacion_todo,
+                registro.normalizacion_todo_resultado,
+                registro.dni_input,
+                'Normalización completa fallida.',
+                aux_boolean_resultado
+            );
+        END LOOP;
+    END;
 
-    IF numero_casos_fallidos = 0 THEN
-        DBMS_OUTPUT.PUT_LINE('Pruebas de validar_dni - casos NOK: EXITOSAS');
-    ELSE
-        DBMS_OUTPUT.PUT_LINE('Pruebas de validar_dni - casos NOK: FALLIDAS');
-    END IF;
-    RETURN CASE (numero_casos_exitosos = numero_casos_total)
-           WHEN TRUE THEN 1
-           ELSE 0
-           END;
-END ;
+END dni_utils_test;
 /
 
-
-CREATE OR REPLACE FUNCTION test_es_valido_dni_sql_ok RETURN NUMBER IS
-  numero_casos_total        NUMBER := 0;
-  numero_casos_fallidos     NUMBER := 0;
-  numero_casos_exitosos     NUMBER := 0;
-BEGIN
-    DBMS_OUTPUT.PUT_LINE('Pruebas de es_dni_valido - casos OK: EN PROGRESO');
-    FOR registro IN (
-        SELECT dni_input, es_valido, dni_utils.es_dni_valido(dni_input) as resultado FROM dni_test_data_ok
-    ) LOOP
-        numero_casos_total := numero_casos_total + 1;
-            IF registro.resultado != registro.es_valido THEN
-                numero_casos_fallidos := numero_casos_fallidos + 1;
-                DBMS_OUTPUT.PUT_LINE('FALLO EN es_dni_valido con DNI=' || registro.dni_input || 
-                                     ': se esperaba es_valido=' || registro.es_valido || 
-                                     ', pero se obtuvo es_valido=' || registro.resultado);
-            END IF;
-    END LOOP;
-    numero_casos_exitosos := numero_casos_total - numero_casos_fallidos;
-    DBMS_OUTPUT.PUT_LINE('Pruebas de es_dni_valido - casos OK: FINALIZADAS');
-    DBMS_OUTPUT.PUT_LINE('Resumen de resultados: ');
-    DBMS_OUTPUT.PUT_LINE('. Casos totales: ' || numero_casos_total );
-    DBMS_OUTPUT.PUT_LINE('. Casos exitosos: ' || numero_casos_exitosos );
-    DBMS_OUTPUT.PUT_LINE('. Casos fallidos: ' || numero_casos_fallidos );
-
-    IF numero_casos_fallidos = 0 THEN
-        DBMS_OUTPUT.PUT_LINE('Pruebas de es_dni_valido - casos OK: EXITOSAS');
-    ELSE
-        DBMS_OUTPUT.PUT_LINE('Pruebas de es_dni_valido - casos OK: FALLIDAS');
-    END IF;
-    RETURN CASE (numero_casos_exitosos = numero_casos_total)
-           WHEN TRUE THEN 1
-           ELSE 0
-           END;
-END;
-/
-
-
-CREATE OR REPLACE FUNCTION test_es_valido_dni_sql_nok RETURN NUMBER IS
-  numero_casos_total        NUMBER := 0;
-  numero_casos_fallidos     NUMBER := 0;
-  numero_casos_exitosos     NUMBER := 0;
-BEGIN
-    DBMS_OUTPUT.PUT_LINE('Pruebas de es_dni_valido - casos NOK: EN PROGRESO');
-    FOR registro IN (
-        SELECT dni_input, es_valido, dni_utils.es_dni_valido(dni_input) as resultado FROM dni_test_data_nok
-    ) LOOP
-        numero_casos_total := numero_casos_total + 1;
-            IF registro.resultado != registro.es_valido THEN
-                numero_casos_fallidos := numero_casos_fallidos + 1;
-                DBMS_OUTPUT.PUT_LINE('FALLO EN es_dni_valido con DNI=' || registro.dni_input || 
-                                     ': se esperaba es_valido=' || registro.es_valido || 
-                                     ', pero se obtuvo es_valido=' || registro.resultado);
-            END IF;
-    END LOOP;
-    numero_casos_exitosos := numero_casos_total - numero_casos_fallidos;
-    DBMS_OUTPUT.PUT_LINE('Pruebas de es_dni_valido - casos NOK: FINALIZADAS');
-    DBMS_OUTPUT.PUT_LINE('Resumen de resultados: ');
-    DBMS_OUTPUT.PUT_LINE('. Casos totales: ' || numero_casos_total );
-    DBMS_OUTPUT.PUT_LINE('. Casos exitosos: ' || numero_casos_exitosos );
-    DBMS_OUTPUT.PUT_LINE('. Casos fallidos: ' || numero_casos_fallidos );
-
-    IF numero_casos_fallidos = 0 THEN
-        DBMS_OUTPUT.PUT_LINE('Pruebas de es_dni_valido - casos NOK: EXITOSAS');
-    ELSE
-        DBMS_OUTPUT.PUT_LINE('Pruebas de es_dni_valido - casos NOK: FALLIDAS');
-    END IF;
-    RETURN CASE (numero_casos_exitosos = numero_casos_total)
-           WHEN TRUE THEN 1
-           ELSE 0
-           END;
-END;
-/
-
-
-
-
-CREATE OR REPLACE FUNCTION test_normalizar_dni_sql_ok RETURN NUMBER IS
-  numero_casos_total        NUMBER := 0;
-  numero_casos_fallidos     NUMBER := 0;
-  numero_casos_exitosos     NUMBER := 0;
-BEGIN
-    DBMS_OUTPUT.PUT_LINE('Pruebas de normalizar_dni - casos OK: EN PROGRESO');
-    FOR registro IN (
-        SELECT dni_input, dni_utils.normalizar_dni(dni_input) as resultado FROM dni_test_data_ok
-    ) LOOP
-    -- TODO: Ejercicio para casa
-    END LOOP;
-    numero_casos_exitosos := numero_casos_total - numero_casos_fallidos;
-    DBMS_OUTPUT.PUT_LINE('Pruebas de normalizar_dni - casos OK: FINALIZADAS');
-    DBMS_OUTPUT.PUT_LINE('Resumen de resultados: ');
-    DBMS_OUTPUT.PUT_LINE('. Casos totales: ' || numero_casos_total );
-    DBMS_OUTPUT.PUT_LINE('. Casos exitosos: ' || numero_casos_exitosos );
-    DBMS_OUTPUT.PUT_LINE('. Casos fallidos: ' || numero_casos_fallidos );
-
-    IF numero_casos_fallidos = 0 THEN
-        DBMS_OUTPUT.PUT_LINE('Pruebas de normalizar_dni - casos OK: EXITOSAS');
-    ELSE
-        DBMS_OUTPUT.PUT_LINE('Pruebas de normalizar_dni - casos OK: FALLIDAS');
-    END IF;
-    RETURN CASE (numero_casos_exitosos = numero_casos_total)
-           WHEN TRUE THEN 1
-           ELSE 0
-           END;
-END;
-/
-
-
-
-
-CREATE OR REPLACE FUNCTION test_normalizar_dni_sql_nok RETURN NUMBER IS
-  numero_casos_total        NUMBER := 0;
-  numero_casos_fallidos     NUMBER := 0;
-  numero_casos_exitosos     NUMBER := 0;
-BEGIN
-    DBMS_OUTPUT.PUT_LINE('Pruebas de normalizar_dni - casos NOK: EN PROGRESO');
-    FOR registro IN (
-        SELECT dni_input, dni_utils.normalizar_dni(dni_input) as resultado FROM dni_test_data_nok
-    ) LOOP
-        numero_casos_total := numero_casos_total + 1;
-            IF registro.resultado IS NOT NULL THEN
-                numero_casos_fallidos := numero_casos_fallidos + 1;
-                DBMS_OUTPUT.PUT_LINE('FALLO EN normalizar_dni con DNI=' || registro.dni_input || 
-                                     ': se esperaba = NULL' || 
-                                     ', pero se obtuvo =' || registro.resultado);
-            END IF;
-    END LOOP;
-    numero_casos_exitosos := numero_casos_total - numero_casos_fallidos;
-    DBMS_OUTPUT.PUT_LINE('Pruebas de normalizar_dni - casos NOK: FINALIZADAS');
-    DBMS_OUTPUT.PUT_LINE('Resumen de resultados: ');
-    DBMS_OUTPUT.PUT_LINE('. Casos totales: ' || numero_casos_total );
-    DBMS_OUTPUT.PUT_LINE('. Casos exitosos: ' || numero_casos_exitosos );
-    DBMS_OUTPUT.PUT_LINE('. Casos fallidos: ' || numero_casos_fallidos );
-
-    IF numero_casos_fallidos = 0 THEN
-        DBMS_OUTPUT.PUT_LINE('Pruebas de normalizar_dni - casos NOK: EXITOSAS');
-    ELSE
-        DBMS_OUTPUT.PUT_LINE('Pruebas de normalizar_dni - casos NOK: FALLIDAS');
-    END IF;
-    RETURN CASE (numero_casos_exitosos = numero_casos_total)
-           WHEN TRUE THEN 1
-           ELSE 0
-           END;
-END;
-/
-
-
--- Ejecuto la función de prueba
-
-DECLARE
-    resultado NUMBER;
-BEGIN
-    DBMS_OUTPUT.PUT_LINE('-------------------------------------------------------------------------------------------------------');
-    DBMS_OUTPUT.PUT_LINE('Iniciando ejecución de pruebas para el paquete dni_utils');
-    DBMS_OUTPUT.PUT_LINE('-------------------------------------------------------------------------------------------------------');
-    resultado := test_validar_dnis_ok;
-    DBMS_OUTPUT.PUT_LINE('-------------------------------------------------------------------------------------------------------');
-    resultado := resultado + test_validar_dnis_nok;
-    DBMS_OUTPUT.PUT_LINE('-------------------------------------------------------------------------------------------------------');
-    resultado := resultado + test_es_valido_dni_sql_ok;
-    DBMS_OUTPUT.PUT_LINE('-------------------------------------------------------------------------------------------------------');
-    resultado := resultado + test_es_valido_dni_sql_nok;
-    DBMS_OUTPUT.PUT_LINE('-------------------------------------------------------------------------------------------------------');
-    resultado := resultado + test_normalizar_dni_sql_ok;
-    DBMS_OUTPUT.PUT_LINE('-------------------------------------------------------------------------------------------------------');
-    resultado := resultado + test_normalizar_dni_sql_nok;
-    DBMS_OUTPUT.PUT_LINE('-------------------------------------------------------------------------------------------------------');    
-    IF resultado = 6 THEN
-        DBMS_OUTPUT.PUT_LINE('RESUMEN: Todas las pruebas del paquete dni_utils han sido exitosas.');
-    ELSE
-        DBMS_OUTPUT.PUT_LINE('RESUMEN: Algunas pruebas del paquete dni_utils han fallado.');
-    END IF;
-    DBMS_OUTPUT.PUT_LINE('-------------------------------------------------------------------------------------------------------');
-END;
-/
+-- Ejecutar las pruebas
+BEGIN dni_utils_test.run_tests; END;
 
 -- Limpieza de datos de prueba
-
 DROP TABLE dni_test_data_ok;
-
--- Limpieza de funciones de prueba
---DROP FUNCTION test_validar_dnis_ok;
---DROP FUNCTION test_validar_dnis_nok;
---DROP FUNCTION test_es_valido_dni_sql_ok;
---DROP FUNCTION test_es_valido_dni_sql_nok;
---DROP FUNCTION test_normalizar_dni_sql_ok;
---DROP FUNCTION test_normalizar_dni_sql_nok;
--- En lugar de esto, podemos meter todas las funciones de prueba en un paquete de pruebas
--- y luego eliminar el paquete de pruebas completo.
--- Además, al tener las funciones de prueba en un paquete, puedo tener declaradas variables a nivel del paquete, 
--- Como por ejemplo: un contador de pruebas totales, fallidas, exitosas, etc.
-
--- Esto lo ejecuto con sqlplus para ver la salida de los mensajes
--- sqlplus usuario/$PASSWORD@bd @dni_utils/test/dni_utils.test.sql | grep "dni_utils han sido exitosas"
