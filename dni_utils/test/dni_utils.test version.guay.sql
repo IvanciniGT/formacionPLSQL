@@ -1,4 +1,5 @@
-SET SERVEROUTPUT ON; -- Esto es para que SQL*Plus muestre los mensajes de DBMS_OUTPUT.PUT_LINE
+-- Esto es para que SQL*Plus muestre los mensajes de DBMS_OUTPUT.PUT_LINE
+SET SERVEROUTPUT ON; 
 
 
 -- Cargamos los datos de prueba para el paquete dni_utils
